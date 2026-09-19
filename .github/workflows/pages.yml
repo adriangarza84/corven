@@ -1,8 +1,9 @@
 name: Vista previa en GitHub Pages
 
 # Despliegue de vista previa, para revisar el sitio antes de que exista en
-# corven.mx. Pages lo sirve bajo /corven/, así que el build usa `build:pages`,
-# que reescribe las rutas absolutas y marca todo como noindex.
+# corven.mx. Pages lo sirve bajo /corven/, así que después de construir se
+# corre herramientas/base-pages.mjs, que reescribe las rutas absolutas y marca
+# la vista previa como noindex.
 #
 # Esto NO es el despliegue de producción: no corre la compuerta de pendientes
 # a propósito, porque el objetivo es justamente poder ver el sitio con los
