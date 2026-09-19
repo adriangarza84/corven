@@ -14,7 +14,8 @@
     "astro": "astro",
     "pendientes": "node herramientas/pendientes.mjs",
     "prelanzamiento": "npm run build && npm run auditar && npm run pendientes",
-    "auditar": "node herramientas/auditar.mjs"
+    "auditar": "node herramientas/auditar.mjs",
+    "build:pages": "astro build && node herramientas/base-pages.mjs /corven"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

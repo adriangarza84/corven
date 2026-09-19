@@ -1,0 +1,68 @@
+name: Vista previa en GitHub Pages
+
+# Despliegue de vista previa, para revisar el sitio antes de que exista en
+# corven.mx. Pages lo sirve bajo /corven/, así que el build usa `build:pages`,
+# que reescribe las rutas absolutas y marca todo como noindex.
+#
+# Esto NO es el despliegue de producción: no corre la compuerta de pendientes
+# a propósito, porque el objetivo es justamente poder ver el sitio con los
+# pendientes de Corven todavía abiertos.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un despliegue a la vez; no se cancela el que esté en curso.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Construir
+        run: npm run build
+
+      # Se audita la salida tal como iría a corven.mx, con rutas desde la raíz.
+      - name: Revisar el resultado
+        run: npm run auditar
+
+      # Y después se adapta al subdirectorio en el que Pages la va a servir.
+      - name: Adaptar a /corven/
+        run: node herramientas/base-pages.mjs /corven
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  desplegar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4
