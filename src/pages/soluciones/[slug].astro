@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import SolutionLayout from '../../layouts/SolutionLayout.astro';
+
+export async function getStaticPaths() {
+  const soluciones = await getCollection('soluciones');
+  return soluciones.map((entrada) => ({ params: { slug: entrada.id }, props: { entrada } }));
+}
+
+const { entrada } = Astro.props;
+---
+<SolutionLayout entrada={entrada} />

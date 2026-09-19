@@ -1,0 +1,114 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { Bloque } from '../../data/bloques';
+
+interface Props { bloques: Bloque[] }
+const { bloques } = Astro.props;
+
+const idDe = (h2: string) =>
+  h2.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+---
+
+{bloques.map((b) => (
+  <section class="bloque" id={idDe(b.h2)}>
+    <div class="contenedor">
+      <div class="cabecera">
+        <h2 class="t-h2">{b.h2}</h2>
+        {'intro' in b && b.intro && <p class="t-lead intro medida">{b.intro}</p>}
+      </div>
+
+      {b.tipo === 'prosa' && (
+        <div class="prosa medida cuerpo">
+          {b.parrafos.map((p) => <p>{p}</p>)}
+        </div>
+      )}
+
+      {b.tipo === 'tarjetas' && (
+        <ul class="rejilla">
+          {b.items.map((i) => (
+            <li class="tarjeta pieza">
+              <h3 class="pieza-titulo">{i.titulo}</h3>
+              <p class="pieza-texto">{i.texto}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {b.tipo === 'lista' && (
+        <ul class="puntos">
+          {b.items.map((i) => (
+            <li>
+              <span class="punto-marca" aria-hidden="true"></span>
+              <span>
+                <strong>{i.titulo}</strong>
+                <span class="punto-texto">{i.texto}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {b.nota && <p class="nota">{b.nota}</p>}
+
+      {b.enlace && (
+        <a href={b.enlace.href} class="enlace-flecha enlace">
+          {b.enlace.texto}
+          <Icon name="flecha" size={16} />
+        </a>
+      )}
+    </div>
+  </section>
+))}
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+
+  .cabecera { display: grid; gap: 14px; }
+  .intro { color: var(--corven-text-dim); }
+
+  .cuerpo { margin-top: 24px; }
+
+  .rejilla {
+    list-style: none;
+    padding: 0;
+    margin-top: 32px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 620px) { .rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .rejilla { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .pieza { padding: 24px; display: grid; gap: 8px; align-content: start; }
+  .pieza-titulo { font-size: 17px; font-weight: 500; font-family: var(--font-display); }
+  .pieza-texto { font-size: 15px; line-height: 1.6; color: var(--corven-text-dim); }
+
+  .puntos { list-style: none; padding: 0; margin-top: 28px; display: grid; gap: 18px; max-width: 76ch; }
+  .puntos li { display: grid; grid-template-columns: 8px 1fr; gap: 14px; align-items: start; }
+  .punto-marca {
+    width: 6px; height: 6px;
+    margin-top: 10px;
+    border-radius: 999px;
+    background: var(--corven-accent);
+  }
+  .puntos strong { color: var(--corven-text); font-weight: 500; }
+  .punto-texto { color: var(--corven-text-dim); }
+  .puntos strong + .punto-texto::before { content: ' '; }
+
+  .nota {
+    margin-top: 28px;
+    padding-left: 14px;
+    border-left: 2px solid var(--corven-line);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+    max-width: 68ch;
+  }
+
+  .enlace { margin-top: 28px; }
+</style>

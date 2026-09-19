@@ -1,0 +1,65 @@
+/* ---------------------------------------------------------------------------
+   CORVEN — Sistema de diseño (sección 2 del documento de contenido)
+   Los tokens viven aquí una sola vez y se mapean a Tailwind vía @theme.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Base */
+  --corven-void:      #08090A;  /* fondo de página */
+  --corven-surface:   #111316;  /* tarjetas, bloques elevados */
+  --corven-surface-2: #191C21;  /* hover, campos de formulario */
+  --corven-line:      #262A31;  /* bordes y divisores */
+
+  /* Texto */
+  --corven-text:      #F4F5F6;  /* titulares y cuerpo principal */
+  --corven-text-dim:  #9AA1A9;  /* texto secundario */
+  --corven-text-mute: #6B727A;  /* etiquetas, pies, metadatos — nunca texto esencial */
+
+  /* Semánticos: solo estados reales del sistema de monitoreo, nunca decorativos */
+  --corven-armed:     #2E9E63;  /* estado protegido / activo */
+  --corven-signal:    #D9A441;  /* señal recibida / en verificación */
+  --corven-alert:     #C4453B;  /* evento confirmado */
+  /* Tinte claro de --corven-alert para TEXTO. El token semántico se queda
+     con su valor exacto para los estados del sistema, pero a 13 px sobre
+     fondo oscuro da 4.04:1 y no alcanza AA; esta variante da 5.5:1. */
+  --corven-alert-txt: #DB6055;
+
+  /* Acento de marca.
+     El logotipo de Corven es un wordmark monocromático blanco: no hay color de
+     acento que extraer. Siguiendo la instrucción de la sección 2, se adopta
+     --corven-armed como color de acción y el sitio queda en blanco y negro con
+     un solo color vivo. No se inventó un acento nuevo. */
+  --corven-accent:    #2E9E63;
+  --corven-accent-dk: #278654;  /* 15% más oscuro, para hover */
+
+  /* Layout */
+  --corven-container: 1240px;
+  --corven-gutter:    24px;
+
+  color-scheme: dark;
+}
+
+@theme {
+  --color-void: var(--corven-void);
+  --color-surface: var(--corven-surface);
+  --color-surface-2: var(--corven-surface-2);
+  --color-line: var(--corven-line);
+  --color-text: var(--corven-text);
+  --color-dim: var(--corven-text-dim);
+  --color-mute: var(--corven-text-mute);
+  --color-armed: var(--corven-armed);
+  --color-signal: var(--corven-signal);
+  --color-alert: var(--corven-alert);
+  --color-alert-txt: var(--corven-alert-txt);
+  --color-accent: var(--corven-accent);
+  --color-accent-dk: var(--corven-accent-dk);
+
+  --font-display: 'Sora Variable', 'Sora respaldo', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter respaldo', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Radios: no un solo radio para todo (sección 2) */
+  --radius-field: 4px;   /* campos y botones */
+  --radius-card: 8px;    /* tarjetas de contenido */
+
+  --spacing-section: 96px;
+}

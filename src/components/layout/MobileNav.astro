@@ -1,0 +1,204 @@
+---
+import Icon from '../ui/Icon.astro';
+import Logo from '../ui/Logo.astro';
+import { CONTACTO, SERVICIOS_NAV, SOLUCIONES_NAV } from '../../data/site';
+
+const grupos = [
+  { nombre: 'Servicios', hijos: SERVICIOS_NAV },
+  { nombre: 'Soluciones', hijos: SOLUCIONES_NAV },
+];
+const sueltos = [
+  { nombre: 'Central de monitoreo', href: '/monitoreo/' },
+  { nombre: 'Planes', href: '/planes/' },
+  { nombre: 'Cobertura', href: '/cobertura/' },
+  { nombre: 'Nosotros', href: '/nosotros/' },
+];
+---
+
+<div id="menu-movil" class="menu" hidden>
+  <div class="menu-barra contenedor">
+    <a href="/" aria-label="Corven, inicio"><Logo width={108} /></a>
+    <button type="button" id="cerrar-menu" class="cerrar" aria-label="Cerrar menú">
+      <Icon name="cerrar" size={22} />
+    </button>
+  </div>
+
+  <nav class="menu-cuerpo contenedor" aria-label="Navegación móvil">
+    <ul class="menu-lista">
+      {grupos.map((g, gi) => (
+        <li class="menu-grupo">
+          <button type="button" class="menu-acordeon" aria-expanded="false" aria-controls={`grupo-${gi}`}>
+            <span>{g.nombre}</span>
+            <Icon name="chevron" size={18} class="menu-chevron" />
+          </button>
+          <ul id={`grupo-${gi}`} class="menu-sub" hidden>
+            {g.hijos.map((h) => (
+              <li><a href={h.href}>{h.nombre}</a></li>
+            ))}
+          </ul>
+        </li>
+      ))}
+      {sueltos.map((s) => (
+        <li class="menu-grupo">
+          <a href={s.href} class="menu-directo">{s.nombre}</a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="menu-contacto">
+      <a href={`tel:${CONTACTO.ventas.tel}`} data-evento="click_telefono" data-origen="menu-movil">
+        <Icon name="telefono" size={16} />
+        <span>{CONTACTO.ventas.display}</span>
+      </a>
+      <p>{CONTACTO.ventas.horario}</p>
+    </div>
+  </nav>
+
+  <div class="menu-pie contenedor">
+    <a href="/contacto/" class="btn btn-primario" style="width:100%">Cotizar</a>
+  </div>
+</div>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: var(--corven-void);
+    display: flex;
+    flex-direction: column;
+    overscroll-behavior: contain;
+  }
+  .menu[hidden] { display: none; }
+
+  .menu-barra {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--corven-line);
+    flex-shrink: 0;
+    color: var(--corven-text);
+  }
+  .cerrar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-field);
+    background: transparent;
+    color: var(--corven-text);
+    cursor: pointer;
+  }
+
+  .menu-cuerpo { flex: 1; overflow-y: auto; padding-block: 8px 32px; }
+  .menu-lista { list-style: none; padding: 0; }
+  .menu-grupo { border-bottom: 1px solid var(--corven-line); }
+
+  .menu-acordeon,
+  .menu-directo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 18px 0;
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--corven-text);
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  .menu-chevron { transition: transform 0.2s ease; color: var(--corven-text-mute); }
+  .menu-acordeon[aria-expanded='true'] .menu-chevron { transform: rotate(180deg); }
+
+  .menu-sub { list-style: none; padding: 0 0 14px; display: grid; gap: 2px; }
+  .menu-sub[hidden] { display: none; }
+  .menu-sub a {
+    display: block;
+    padding: 11px 14px;
+    font-size: 16px;
+    color: var(--corven-text-dim);
+    background: var(--corven-surface);
+    border-radius: var(--radius-field);
+  }
+  .menu-sub a:hover { color: var(--corven-text); background: var(--corven-surface-2); }
+
+  .menu-contacto { margin-top: 28px; }
+  .menu-contacto a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--corven-text);
+    font-family: var(--font-display);
+  }
+  .menu-contacto a svg { color: var(--corven-accent); }
+  .menu-contacto p { margin-top: 6px; font-size: 13px; color: var(--corven-text-mute); }
+
+  .menu-pie {
+    flex-shrink: 0;
+    padding-block: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--corven-line);
+    background: var(--corven-void);
+  }
+</style>
+
+<script>
+  const menu = document.getElementById('menu-movil');
+  const abrir = document.getElementById('abrir-menu');
+  const cerrar = document.getElementById('cerrar-menu');
+  if (menu && abrir && cerrar) {
+    let ultimoFoco: HTMLElement | null = null;
+
+    const abrirMenu = () => {
+      ultimoFoco = document.activeElement as HTMLElement;
+      menu.hidden = false;
+      document.body.style.overflow = 'hidden';
+      abrir.setAttribute('aria-expanded', 'true');
+      cerrar.focus();
+    };
+    const cerrarMenu = () => {
+      menu.hidden = true;
+      document.body.style.overflow = '';
+      abrir.setAttribute('aria-expanded', 'false');
+      (ultimoFoco ?? abrir).focus();
+    };
+
+    abrir.addEventListener('click', abrirMenu);
+    cerrar.addEventListener('click', cerrarMenu);
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) cerrarMenu();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (menu.hidden) return;
+      if (e.key === 'Escape') { cerrarMenu(); return; }
+      if (e.key !== 'Tab') return;
+      const focos = menu.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      const visibles = Array.from(focos).filter((el) => el.offsetParent !== null);
+      if (!visibles.length) return;
+      const primero = visibles[0]!;
+      const ultimo = visibles[visibles.length - 1]!;
+      if (e.shiftKey && document.activeElement === primero) { e.preventDefault(); ultimo.focus(); }
+      else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primero.focus(); }
+    });
+
+    menu.querySelectorAll<HTMLButtonElement>('.menu-acordeon').forEach((boton) => {
+      boton.addEventListener('click', () => {
+        const panel = document.getElementById(boton.getAttribute('aria-controls') ?? '');
+        if (!panel) return;
+        const abierto = boton.getAttribute('aria-expanded') === 'true';
+        boton.setAttribute('aria-expanded', String(!abierto));
+        panel.hidden = abierto;
+      });
+    });
+  }
+</script>

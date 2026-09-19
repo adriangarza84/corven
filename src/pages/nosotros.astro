@@ -1,0 +1,206 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import TrustBar from '../components/blocks/TrustBar.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import Icon from '../components/ui/Icon.astro';
+import { CONTACTO } from '../data/site';
+import { HISTORIA, MARCAS } from '../data/pendientes';
+
+const wa = 'Hola Corven, quiero saber más sobre la empresa';
+
+const comoTrabajamos = [
+  {
+    icono: 'verificar',
+    titulo: 'Levantamiento antes de cotizar',
+    texto:
+      'No cotizamos por teléfono. Un asesor visita la propiedad, revisa accesos, ángulos, distancias e infraestructura existente, y propone el sistema que corresponde. Si con seis sensores se cubre bien, proponemos seis.',
+  },
+  {
+    icono: 'llave',
+    titulo: 'Instalación con personal propio',
+    texto: 'Los técnicos que llegan a tu propiedad son de Corven. No subcontratamos la instalación.',
+  },
+  {
+    icono: 'panel',
+    titulo: 'Monitoreo con personal propio',
+    texto:
+      'La central es nuestra, la plataforma es Kodex y los operadores son parte de la empresa. Tus señales no salen a un tercero.',
+  },
+  {
+    icono: 'reloj',
+    titulo: 'Soporte después de instalar',
+    texto:
+      'La venta no termina con la instalación. El sistema necesita ajustes en las primeras semanas, sensores recalibrados y protocolos afinados conforme cambia tu operación.',
+  },
+] as const;
+
+const numeros = [
+  { cifra: '25+', texto: 'años en la industria de la seguridad electrónica' },
+  { cifra: '2,000+', texto: 'puntos instalados' },
+  { cifra: '10', texto: 'municipios del área metropolitana con cobertura' },
+];
+---
+<BaseLayout
+  title="25 años en seguridad electrónica | Corven"
+  description="Más de 2,000 puntos instalados y central de monitoreo propia en San Pedro Garza García. Conoce cómo trabajamos."
+  migas={[{ nombre: 'Nosotros', href: '/nosotros/' }]}
+  whatsapp={wa}
+>
+  <PageHero
+    kicker="Nosotros"
+    h1="25 años en un negocio donde la experiencia se nota"
+    subtitulo="Corven diseña, instala y monitorea sistemas de seguridad electrónica en el área metropolitana de Monterrey desde hace más de dos décadas."
+  />
+  <TrustBar />
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Cómo trabajamos</h2>
+      <ul class="trabajo">
+        {comoTrabajamos.map((c) => (
+          <li>
+            <span class="trabajo-icono"><Icon name={c.icono} size={24} /></span>
+            <h3 class="t-h3">{c.titulo}</h3>
+            <p>{c.texto}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Los números</h2>
+      <ul class="numeros">
+        {numeros.map((n) => (
+          <li>
+            <span class="cifra">{n.cifra}</span>
+            <span class="cifra-texto">{n.texto}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* Historia de la empresa: pendiente #13. No se publica mientras esté vacía. */}
+  {HISTORIA.length > 0 && (
+    <section class="bloque">
+      <div class="contenedor">
+        <h2 class="t-h2">Nuestra historia</h2>
+        <div class="prosa medida cuerpo">
+          {HISTORIA.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Marcas de equipo: pendiente #7. */}
+  {MARCAS.length > 0 && (
+    <section class="bloque">
+      <div class="contenedor">
+        <h2 class="t-h2">Con qué equipo trabajamos</h2>
+        <ul class="marcas">{MARCAS.map((m) => <li>{m}</li>)}</ul>
+      </div>
+    </section>
+  )}
+
+  <section class="bloque">
+    <div class="contenedor dos">
+      <div>
+        <h2 class="t-h2">En qué somos claros</h2>
+        <div class="prosa cuerpo">
+          <p>
+            No tenemos guardias ni unidades de reacción armada, y no ofrecemos servicios que no
+            prestamos. Nuestro trabajo es detectar, verificar y escalar, y lo hacemos con
+            infraestructura propia.
+          </p>
+        </div>
+      </div>
+      <div class="ficha">
+        <h3 class="ficha-titulo">Dónde estamos</h3>
+        <address>
+          {CONTACTO.direccion.edificio}<br />
+          {CONTACTO.direccion.calle}<br />
+          {CONTACTO.direccion.colonia}, {CONTACTO.direccion.cp}<br />
+          {CONTACTO.direccion.municipio}, {CONTACTO.direccion.estado}
+        </address>
+        <a href="/contacto/" class="enlace-flecha ficha-enlace">
+          Ver datos de contacto
+          <Icon name="flecha" size={16} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta whatsappTexto={wa} />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+  .cuerpo { margin-top: 22px; }
+
+  .trabajo {
+    list-style: none;
+    padding: 0;
+    margin-top: 36px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 760px) { .trabajo { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .trabajo li {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: 26px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+  }
+  .trabajo-icono { color: var(--corven-accent); margin-bottom: 4px; }
+  .trabajo p { font-size: 15px; line-height: 1.65; color: var(--corven-text-dim); }
+
+  .numeros {
+    list-style: none;
+    padding: 0;
+    margin-top: 36px;
+    display: grid;
+    gap: 28px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 720px) { .numeros { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .numeros li { display: grid; gap: 6px; }
+  .cifra {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--corven-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .cifra-texto { font-size: 15px; color: var(--corven-text-dim); max-width: 26ch; }
+
+  .marcas { list-style: none; padding: 0; margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .marcas li {
+    padding: 9px 16px;
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-field);
+    font-size: 14px;
+    color: var(--corven-text-dim);
+  }
+
+  .dos { display: grid; gap: 36px; align-items: start; }
+  @media (min-width: 900px) { .dos { grid-template-columns: 1.3fr 1fr; gap: 56px; } }
+
+  .ficha {
+    padding: 26px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+  }
+  .ficha-titulo { font-family: var(--font-display); font-size: 16px; font-weight: 500; margin-bottom: 12px; }
+  .ficha address { font-style: normal; font-size: 15px; line-height: 1.7; color: var(--corven-text-dim); }
+  .ficha-enlace { margin-top: 18px; }
+</style>

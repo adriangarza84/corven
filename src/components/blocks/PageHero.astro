@@ -1,0 +1,41 @@
+---
+interface Props {
+  h1: string;
+  subtitulo: string;
+  botones?: { texto: string; href: string; primario?: boolean }[];
+  /** Etiqueta pequeña sobre el titular (municipio, categoría). */
+  kicker?: string;
+}
+const { h1, subtitulo, botones = [], kicker } = Astro.props;
+---
+<section class="hero-pagina" data-seccion="hero">
+  <div class="contenedor">
+    {kicker && <p class="kicker">{kicker}</p>}
+    <h1 class="t-h1">{h1}</h1>
+    <p class="t-lead subtitulo">{subtitulo}</p>
+    {botones.length > 0 && (
+      <div class="botones">
+        {botones.map((b) => (
+          <a href={b.href} class:list={['btn', b.primario ? 'btn-primario' : 'btn-secundario']}>
+            {b.texto}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .hero-pagina { padding-block: 44px 48px; }
+  @media (min-width: 768px) { .hero-pagina { padding-block: 72px 80px; } }
+
+  .kicker {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--corven-accent);
+    margin-bottom: 14px;
+  }
+  h1 { max-width: 20ch; }
+  .subtitulo { margin-top: 20px; color: var(--corven-text-dim); max-width: 62ch; }
+  .botones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+</style>

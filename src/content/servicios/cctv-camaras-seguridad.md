@@ -1,0 +1,72 @@
+---
+orden: 2
+nombre: "CCTV y cámaras de seguridad"
+nombreCorto: "CCTV"
+icono: "camara"
+seo:
+  title: "Cámaras de seguridad CCTV en Monterrey | Corven"
+  description: "Videovigilancia HD y 4K con grabación local o en nube, analítica con IA y acceso desde tu celular. Diseño, instalación y soporte en Monterrey."
+h1: "Cámaras de seguridad que sirven cuando las necesitas"
+subtitulo: "Videovigilancia HD y 4K con acceso desde tu celular, grabación local o en nube y analítica que avisa en el momento, no al día siguiente cuando revisas el video."
+botones:
+  primario:
+    texto: "Cotizar mi sistema de cámaras"
+    href: "/contacto/"
+  secundario:
+    texto: "Ver soluciones por giro"
+    href: "/soluciones/"
+whatsapp: "Hola Corven, quiero cotizar cámaras de seguridad"
+serviceType: "Diseño e instalación de sistemas de videovigilancia CCTV"
+secciones:
+  - tipo: "prosa"
+    h2: "El problema con la mayoría de las instalaciones"
+    parrafos:
+      - "Casi todos los sistemas de CCTV se usan hacia atrás: pasó algo, revisas la grabación, encuentras el momento y ya. Sirve para el seguro y para la denuncia, pero el daño ya ocurrió."
+      - "Un sistema bien diseñado también trabaja hacia adelante. La analítica detecta que alguien cruzó una línea perimetral a las 3 de la mañana, o que un vehículo lleva veinte minutos detenido frente a tu acceso, y manda la alerta en ese momento."
+  - tipo: "tarjetas"
+    h2: "Qué instalamos"
+    items:
+      - titulo: "Cámaras fijas HD y 4K"
+        texto: "Para accesos, pasillos, cajas, bodegas y áreas de trabajo. Con visión nocturna real y resistencia a intemperie donde se requiere."
+      - titulo: "Cámaras PTZ"
+        texto: "Con movimiento y zoom, para cubrir grandes superficies con menos equipos: patios de maniobras, estacionamientos, perímetros."
+      - titulo: "Grabación local (NVR/DVR)"
+        texto: "El video se queda en tu instalación. Menor costo recurrente, y el tiempo de retención depende de la capacidad de disco que definamos."
+      - titulo: "Grabación en nube"
+        texto: "El video se resguarda fuera de la propiedad. Si se llevan o destruyen el equipo, la evidencia sigue existiendo. Es lo recomendable en comercio y en sucursales."
+      - titulo: "Acceso remoto"
+        texto: "Vista en vivo y reproducción desde celular, tablet o computadora, con usuarios y permisos diferenciados."
+  - tipo: "lista"
+    h2: "Analítica con inteligencia artificial"
+    items:
+      - titulo: "Cruce de línea y zona de intrusión."
+        texto: "Alerta cuando alguien entra a un área definida en horarios definidos."
+      - titulo: "Detección de personas y vehículos."
+        texto: "Filtra los disparos por animales, ramas o cambios de luz, que son la causa de casi todas las falsas alertas."
+      - titulo: "Reconocimiento de placas."
+        texto: "Registro de entrada y salida de vehículos, con listas de autorizados."
+      - titulo: "Merodeo."
+        texto: "Detecta permanencia prolongada en zonas donde nadie debería quedarse."
+      - titulo: "Conteo de personas."
+        texto: "Aforo y flujo por zona, útil en comercio."
+      - titulo: "Objeto abandonado o retirado."
+        texto: "Alerta cuando algo desaparece del cuadro o aparece donde no estaba."
+    intro: "Las cámaras actuales traen procesamiento a bordo que permite configurar detecciones específicas. Lo que se puede activar depende del modelo de equipo y del diseño del sistema."
+    nota: "En instalaciones conectadas a nuestra central, estas alertas llegan al operador y entran al mismo protocolo de verificación que las señales de alarma."
+  - tipo: "prosa"
+    h2: "Cuántas cámaras necesitas"
+    parrafos:
+      - "No es una cifra que se pueda dar por teléfono. Depende de accesos, de ángulos muertos, de qué tan lejos está lo que quieres identificar y de si necesitas reconocer rostros o solo registrar movimiento."
+      - "En el levantamiento recorremos la propiedad, marcamos los puntos de cobertura y te entregamos el diagrama con la propuesta. Sin costo."
+faq:
+  - p: "¿Puedo ver las cámaras desde mi celular?"
+    r: "Sí, en vivo y con acceso a las grabaciones. Puedes dar accesos con permisos distintos a distintas personas."
+  - p: "¿Cuánto tiempo se guarda el video?"
+    r: "Con grabación local depende de la capacidad de disco que instalemos; lo habitual es entre 15 y 30 días. En nube, del plan de resguardo que contrates."
+  - p: "¿Nube o grabador local?"
+    r: "Local es más económico y suficiente para la mayoría de casas. Nube conviene en comercios, en sucursales y donde el equipo mismo puede ser el objetivo del robo. En muchos proyectos se combinan."
+  - p: "¿Las cámaras se conectan a la alarma?"
+    r: "Sí, y es la configuración que más recomendamos. Permite que el operador confirme en video antes de escalar el evento."
+  - p: "¿Sirven de noche?"
+    r: "Sí. Todas las cámaras que instalamos tienen visión nocturna; en zonas críticas usamos modelos con color a color real en baja luz."
+---

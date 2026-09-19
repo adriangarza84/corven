@@ -1,0 +1,155 @@
+---
+import { CONTACTO } from '../../data/site';
+
+/**
+ * Mapa estático del área de cobertura. No es interactivo (sección 5.7).
+ *
+ * Los diez municipios se dibujan a partir de sus coordenadas reales, con una
+ * proyección equirectangular corregida por la latitud, así que las posiciones
+ * relativas entre ellos son correctas. Es un diagrama de cobertura, no una
+ * carta topográfica: no dibuja límites municipales.
+ */
+/* `pos` coloca la etiqueta alrededor del punto. En el racimo central
+   (Monterrey, Guadalupe, Santa Catarina, San Pedro) las etiquetas se abren en
+   direcciones distintas para que no se encimen. */
+const puntos: Punto[] = [
+  { n: 'García', lat: 25.8167, lng: -100.5833, pos: 'arriba' },
+  { n: 'Escobedo', lat: 25.7933, lng: -100.3161, pos: 'arriba' },
+  { n: 'Apodaca', lat: 25.7811, lng: -100.1886, pos: 'arriba' },
+  { n: 'San Nicolás', lat: 25.7417, lng: -100.2825, pos: 'derecha' },
+  { n: 'Monterrey', lat: 25.6866, lng: -100.3161, pos: 'arriba' },
+  { n: 'Guadalupe', lat: 25.6775, lng: -100.2597, pos: 'derecha' },
+  { n: 'Santa Catarina', lat: 25.6739, lng: -100.4583, pos: 'izquierda' },
+  { n: 'San Pedro', lat: 25.6587, lng: -100.4022, pos: 'abajo', sede: true },
+  { n: 'Juárez', lat: 25.6472, lng: -100.0972, pos: 'derecha' },
+  { n: 'Santiago', lat: 25.4247, lng: -100.1508, pos: 'abajo' },
+];
+
+type Punto = {
+  n: string;
+  lat: number;
+  lng: number;
+  pos: 'arriba' | 'abajo' | 'izquierda' | 'derecha';
+  sede?: boolean;
+};
+
+const W = 560;
+const H = 420;
+const PAD_X = 96;
+const PAD_Y = 52;
+
+const lats = puntos.map((p) => p.lat);
+const lngs = puntos.map((p) => p.lng);
+const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+const latMedia = (minLat + maxLat) / 2;
+const kx = Math.cos((latMedia * Math.PI) / 180);
+
+/* Extensión en "grados corregidos" para conservar la proporción real. */
+const anchoGrados = (maxLng - minLng) * kx;
+const altoGrados = maxLat - minLat;
+const escala = Math.min((W - PAD_X * 2) / anchoGrados, (H - PAD_Y * 2) / altoGrados);
+
+const offsetX = (W - anchoGrados * escala) / 2;
+const offsetY = (H - altoGrados * escala) / 2;
+
+const proyectar = (lat: number, lng: number) => ({
+  x: offsetX + (lng - minLng) * kx * escala,
+  y: offsetY + (maxLat - lat) * escala,
+});
+
+/* Desplazamiento de la etiqueta según su posición declarada. */
+const ETIQUETA = {
+  arriba: { dx: 0, dy: -13, anchor: 'middle' },
+  abajo: { dx: 0, dy: 23, anchor: 'middle' },
+  izquierda: { dx: -11, dy: 4, anchor: 'end' },
+  derecha: { dx: 11, dy: 4, anchor: 'start' },
+} as const;
+
+const nodos = puntos.map((p) => {
+  const { x, y } = proyectar(p.lat, p.lng);
+  const e = ETIQUETA[p.pos];
+  const extra = p.sede ? (p.pos === 'abajo' ? 7 : 0) : 0;
+  return { ...p, x, y, lx: x + e.dx, ly: y + e.dy + extra, anchor: e.anchor };
+});
+const sede = nodos.find((n) => n.sede)!;
+---
+<figure class="mapa">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="mapa-titulo" class="lienzo">
+    <title id="mapa-titulo">
+      Diagrama de cobertura de Corven en los diez municipios del área metropolitana de Monterrey,
+      con la central de monitoreo en San Pedro Garza García.
+    </title>
+
+    <defs>
+      <pattern id="retic" width="28" height="28" patternUnits="userSpaceOnUse">
+        <path d="M28 0H0V28" fill="none" stroke="var(--corven-line)" stroke-width="1" opacity="0.5" />
+      </pattern>
+      <radialGradient id="alcance">
+        <stop offset="0%" stop-color="var(--corven-armed)" stop-opacity="0.11" />
+        <stop offset="70%" stop-color="var(--corven-armed)" stop-opacity="0.05" />
+        <stop offset="100%" stop-color="var(--corven-armed)" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    <rect width={W} height={H} fill="url(#retic)" />
+    <circle cx={sede.x} cy={sede.y} r={Math.max(W, H) * 0.5} fill="url(#alcance)" />
+
+    {nodos.filter((n) => !n.sede).map((n) => (
+      <line
+        x1={sede.x} y1={sede.y} x2={n.x} y2={n.y}
+        stroke="var(--corven-line)" stroke-width="1" stroke-dasharray="3 4"
+      />
+    ))}
+
+    {nodos.map((n) => (
+      <g>
+        <circle
+          cx={n.x} cy={n.y} r={n.sede ? 6 : 4}
+          fill={n.sede ? 'var(--corven-armed)' : 'var(--corven-text-dim)'}
+        />
+        {n.sede && (
+          <circle cx={n.x} cy={n.y} r="12" fill="none" stroke="var(--corven-armed)" stroke-width="1" opacity="0.5" />
+        )}
+        <text
+          x={n.lx} y={n.ly}
+          text-anchor={n.anchor}
+          fill={n.sede ? 'var(--corven-armed)' : 'var(--corven-text-dim)'}
+          font-size={n.sede ? 13 : 12}
+          font-weight={n.sede ? 600 : 400}
+        >{n.n}</text>
+      </g>
+    ))}
+  </svg>
+
+  <figcaption>
+    <span class="marca-sede" aria-hidden="true"></span>
+    Central de monitoreo y oficina: {CONTACTO.direccion.edificio}, {CONTACTO.direccion.municipio}.
+  </figcaption>
+</figure>
+
+<style>
+  .mapa {
+    margin: 0;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .lienzo { width: 100%; height: auto; display: block; font-family: var(--font-sans); }
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 14px 18px;
+    border-top: 1px solid var(--corven-line);
+    font-size: 13px;
+    color: var(--corven-text-dim);
+  }
+  .marca-sede {
+    width: 8px; height: 8px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--corven-armed);
+  }
+</style>

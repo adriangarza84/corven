@@ -1,0 +1,210 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import FormularioContacto from '../components/blocks/FormularioContacto.astro';
+import Icon from '../components/ui/Icon.astro';
+import { CONTACTO, whatsapp } from '../data/site';
+import { negocioLocal } from '../data/schema';
+import { AVISO_PRIVACIDAD_PUBLICADO } from '../data/pendientes';
+
+const { ventas, monitoreo, correo, direccion } = CONTACTO;
+const wa = 'Hola Corven, quiero cotizar un sistema de seguridad';
+
+const consulta = encodeURIComponent(
+  `${direccion.edificio}, ${direccion.calle}, ${direccion.colonia}, ${direccion.cp} ${direccion.municipio}, ${direccion.estado}`
+);
+const mapaSrc = `https://www.google.com/maps?q=${consulta}&z=16&output=embed`;
+const mapaEnlace = `https://www.google.com/maps/search/?api=1&query=${consulta}`;
+---
+<BaseLayout
+  title="Contacto y cotización | Corven"
+  description="Cuéntanos qué necesitas proteger y te preparamos una propuesta. Oficina en Plaza Tanarah, San Pedro Garza García."
+  migas={[{ nombre: 'Contacto', href: '/contacto/' }]}
+  whatsapp={wa}
+  schemas={[negocioLocal()]}
+>
+  <PageHero
+    kicker="Contacto"
+    h1="Cuéntanos qué necesitas proteger"
+    subtitulo="Un asesor revisa tu caso, agenda el levantamiento y te entrega la cotización. Sin costo y sin compromiso."
+  />
+
+  <div class="contenedor rejilla">
+    <div class="columna-form">
+      {AVISO_PRIVACIDAD_PUBLICADO ? (
+        <FormularioContacto />
+      ) : (
+        /* El formulario pide consentimiento sobre el aviso de privacidad y ese
+           documento sigue pendiente (pendiente #5, crítico). Mientras no exista,
+           la sección completa se oculta en lugar de recoger datos sin aviso.
+           Al publicarlo, el formulario aparece solo. */
+        <div class="canales-directos">
+          <h2 class="t-h2">Hablemos directo</h2>
+          <p class="canales-texto">
+            Llámanos o escríbenos por WhatsApp y un asesor toma tu caso en el momento.
+          </p>
+          <div class="canales-botones">
+            <a href={`tel:${ventas.tel}`} class="btn btn-primario" data-origen="contacto-principal">
+              <Icon name="telefono" size={17} />
+              Llamar al {ventas.display}
+            </a>
+            <a href={whatsapp(wa)} target="_blank" rel="noopener" class="btn btn-secundario" data-origen="contacto-principal">
+              <Icon name="whatsapp" size={17} />
+              Escribir por WhatsApp
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <aside class="columna-datos" aria-label="Datos de contacto">
+      <div class="dato">
+        <h2 class="dato-titulo">{ventas.etiqueta}</h2>
+        <a href={`tel:${ventas.tel}`} class="dato-tel" data-origen="contacto-aside">{ventas.display}</a>
+        <p class="dato-horario">{ventas.horario}</p>
+      </div>
+
+      <div class="dato">
+        <h2 class="dato-titulo">{monitoreo.etiqueta}</h2>
+        <a href={`tel:${monitoreo.tel}`} class="dato-tel" data-origen="contacto-aside">{monitoreo.display}</a>
+        <p class="dato-horario dato-24">{monitoreo.horario}</p>
+      </div>
+
+      {/* Correo de contacto: pendiente #2. No se publica hasta tenerlo. */}
+      {correo && (
+        <div class="dato">
+          <h2 class="dato-titulo">Correo</h2>
+          <a href={`mailto:${correo}`} class="dato-tel">{correo}</a>
+        </div>
+      )}
+
+      <div class="dato">
+        <h2 class="dato-titulo">Oficina</h2>
+        <address>
+          {direccion.edificio}<br />
+          {direccion.calle}<br />
+          {direccion.colonia}, C.P. {direccion.cp}<br />
+          {direccion.municipio}, {direccion.estado}
+        </address>
+        <a href={mapaEnlace} target="_blank" rel="noopener" class="enlace-flecha dato-enlace">
+          Abrir en Google Maps
+          <Icon name="flecha" size={16} />
+        </a>
+      </div>
+
+      <div class="dato">
+        <h2 class="dato-titulo">WhatsApp</h2>
+        <a href={whatsapp(wa)} target="_blank" rel="noopener" class="dato-tel" data-origen="contacto-aside">
+          {ventas.display}
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <section class="mapa-seccion">
+    <div class="contenedor">
+      <h2 class="t-h3">Cómo llegar</h2>
+      {/* Carga diferida bajo interacción: el iframe no se inserta hasta el clic,
+          para no castigar el LCP de la página (sección 15.9). */}
+      <div class="mapa-caja">
+        <button type="button" id="cargar-mapa" class="mapa-fachada">
+          <span class="mapa-icono"><Icon name="ubicacion" size={26} /></span>
+          <span class="mapa-titulo">Ver el mapa de Plaza Tanarah</span>
+          <span class="mapa-nota">Se carga al hacer clic, desde Google Maps.</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ mapaSrc }}>
+  const boton = document.getElementById('cargar-mapa');
+  boton?.addEventListener('click', () => {
+    const marco = document.createElement('iframe');
+    marco.src = mapaSrc;
+    marco.title = 'Mapa de la oficina de Corven en Plaza Tanarah, San Pedro Garza García';
+    marco.loading = 'lazy';
+    marco.referrerPolicy = 'no-referrer-when-downgrade';
+    marco.setAttribute('allowfullscreen', '');
+    marco.className = 'mapa-marco';
+    boton.replaceWith(marco);
+  });
+</script>
+
+<style>
+  .rejilla {
+    display: grid;
+    gap: 48px;
+    padding-bottom: 56px;
+  }
+  @media (min-width: 980px) {
+    .rejilla { grid-template-columns: 1.55fr 1fr; gap: 64px; padding-bottom: 80px; }
+  }
+
+  .canales-directos { display: grid; gap: 16px; align-content: start; }
+  .canales-texto { color: var(--corven-text-dim); max-width: 52ch; }
+  .canales-botones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+  .columna-datos { display: grid; gap: 28px; align-content: start; }
+  @media (min-width: 980px) {
+    .columna-datos {
+      padding: 28px;
+      background: var(--corven-surface);
+      border: 1px solid var(--corven-line);
+      border-radius: var(--radius-card);
+    }
+  }
+
+  .dato { display: grid; gap: 5px; }
+  .dato + .dato { padding-top: 24px; border-top: 1px solid var(--corven-line); }
+  .dato-titulo {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--corven-text-dim);
+  }
+  .dato-tel {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--corven-text);
+  }
+  .dato-tel:hover { color: var(--corven-accent); }
+  .dato-horario { font-size: 13.5px; color: var(--corven-text-dim); }
+  .dato-24 { color: var(--corven-armed); }
+  .dato address { font-style: normal; font-size: 15px; line-height: 1.65; color: var(--corven-text-dim); }
+  .dato-enlace { margin-top: 10px; }
+
+  .mapa-seccion { border-top: 1px solid var(--corven-line); padding-block: 48px 64px; }
+  .mapa-caja { margin-top: 20px; }
+
+  .mapa-fachada {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 280px;
+    padding: 32px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+  .mapa-fachada:hover { background: var(--corven-surface-2); border-color: #39404A; }
+  .mapa-icono { color: var(--corven-accent); }
+  .mapa-titulo { font-family: var(--font-display); font-size: 17px; font-weight: 500; color: var(--corven-text); }
+  .mapa-nota { font-size: 13px; color: var(--corven-text-mute); }
+</style>
+
+<style is:global>
+  .mapa-marco {
+    width: 100%;
+    height: 380px;
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    display: block;
+  }
+</style>

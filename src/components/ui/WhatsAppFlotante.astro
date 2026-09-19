@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+import { whatsapp } from '../../data/site';
+
+interface Props { texto?: string }
+const { texto } = Astro.props;
+const href = whatsapp(texto ?? 'Hola Corven, quiero cotizar un sistema de seguridad');
+---
+<a
+  class="wa"
+  href={href}
+  target="_blank"
+  rel="noopener"
+  data-origen="boton-flotante"
+  aria-label="Escribir a Corven por WhatsApp"
+>
+  <Icon name="whatsapp" size={26} />
+</a>
+
+<style>
+  .wa {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 90;
+    width: 54px;
+    height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    color: var(--corven-text);
+    box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.8);
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+  .wa:hover {
+    background: var(--corven-accent);
+    border-color: var(--corven-accent);
+    color: #000000;
+  }
+  @media (min-width: 768px) { .wa { right: 28px; bottom: 28px; } }
+</style>

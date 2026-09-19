@@ -1,0 +1,159 @@
+---
+import '../styles/global.css';
+
+import Header from '../components/layout/Header.astro';
+import MobileNav from '../components/layout/MobileNav.astro';
+import Footer from '../components/layout/Footer.astro';
+import WhatsAppFlotante from '../components/ui/WhatsAppFlotante.astro';
+import Breadcrumbs from '../components/blocks/Breadcrumbs.astro';
+
+import { SITE } from '../data/site';
+import { organizacion, migaDePan } from '../data/schema';
+
+export interface Miga { nombre: string; href: string }
+
+interface Props {
+  title: string;
+  description: string;
+  /** Migas de pan sin incluir "Inicio"; vacío en la home. */
+  migas?: Miga[];
+  /** Esquemas adicionales (LocalBusiness, Service, FAQPage, Offer…). */
+  schemas?: Record<string, unknown>[];
+  /** Imagen Open Graph propia de la página. */
+  ogImagen?: string;
+  /** Texto precargado del botón flotante de WhatsApp. */
+  whatsapp?: string;
+  noindex?: boolean;
+  /** Oculta las migas visibles (home y páginas legales). */
+  sinMigas?: boolean;
+}
+
+const {
+  title,
+  description,
+  migas = [],
+  schemas = [],
+  ogImagen = '/og/og-default.png',
+  whatsapp,
+  noindex = false,
+  sinMigas = false,
+} = Astro.props;
+
+const canonica = new URL(Astro.url.pathname, SITE.url).href;
+const ogAbsoluta = new URL(ogImagen, SITE.url).href;
+
+const migasCompletas = [{ nombre: 'Inicio', href: '/' }, ...migas];
+const grafo = [
+  organizacion(),
+  ...(migas.length ? [migaDePan(migasCompletas)] : []),
+  ...schemas,
+];
+const jsonLd = { '@context': 'https://schema.org', '@graph': grafo };
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonica} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Solo el subconjunto latino, que es el que aparece en el primer viewport. -->
+    <link rel="preload" href="/fuentes/sora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fuentes/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icono.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#08090A" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Corven" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={ogAbsoluta} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogAbsoluta} />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+    <!-- Google Tag Manager -->
+    <script is:inline define:vars={{ gtm: SITE.gtm }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', gtm);
+    </script>
+  </head>
+
+  <body>
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${SITE.gtm}`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+        title="Google Tag Manager"></iframe>
+    </noscript>
+
+    <a href="#contenido" class="saltar">Saltar al contenido</a>
+
+    <Header />
+    <MobileNav />
+
+    <main id="contenido">
+      {!sinMigas && migas.length > 0 && <Breadcrumbs migas={migasCompletas} />}
+      <slot />
+    </main>
+
+    <Footer />
+    <WhatsAppFlotante texto={whatsapp} />
+
+    <style is:global>
+      /* El header es fijo: el contenido arranca debajo. */
+      main { padding-top: 64px; }
+      @media (min-width: 1080px) { main { padding-top: 80px; } }
+    </style>
+
+    <script>
+      /* Eventos de GTM (sección 15.7). Delegación única para toda la página. */
+      type Capa = Record<string, unknown>[];
+      const capa = ((window as unknown as { dataLayer?: Capa }).dataLayer ??= []);
+
+      document.addEventListener('click', (e) => {
+        const enlace = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+        if (!enlace) return;
+        const href = enlace.getAttribute('href') ?? '';
+        const origen = enlace.dataset.origen ?? enlace.closest('[data-seccion]')?.getAttribute('data-seccion') ?? 'sin-origen';
+
+        if (href.startsWith('tel:')) {
+          capa.push({ event: 'click_telefono', origen, numero: href.replace('tel:', '') });
+        } else if (href.includes('wa.me') || href.includes('api.whatsapp.com')) {
+          capa.push({ event: 'click_whatsapp', origen });
+        }
+      });
+
+      if (location.pathname.replace(/\/$/, '') === '/planes') {
+        capa.push({ event: 'ver_planes' });
+      }
+    </script>
+  </body>
+</html>

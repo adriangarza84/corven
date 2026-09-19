@@ -1,0 +1,324 @@
+---
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import { CONTACTO, NAV_PRINCIPAL } from '../../data/site';
+
+const ruta = Astro.url.pathname;
+const activo = (href: string) => ruta === href || (href !== '/' && ruta.startsWith(href));
+const iconos = ['escudo', 'camara', 'acceso', 'incendio'] as const;
+const iconosSol = ['casa', 'tienda', 'nave', 'edificio', 'escuela'] as const;
+---
+
+<header id="encabezado" class="encabezado">
+  <div class="contenedor barra">
+    <a href="/" class="marca" aria-label="Corven, inicio">
+      <Logo width={132} class="logo" />
+    </a>
+
+    <nav class="nav-escritorio" aria-label="Navegación principal">
+      <ul class="nav-lista">
+        {NAV_PRINCIPAL.map((item) => (
+          'hijos' in item && item.hijos ? (
+            <li class="nav-item" data-mega>
+              <button
+                type="button"
+                class="nav-enlace nav-boton"
+                aria-expanded="false"
+                aria-haspopup="true"
+                data-mega-boton
+              >
+                {item.nombre}
+                <Icon name="chevron" size={14} class="nav-chevron" />
+              </button>
+              <div class="mega" data-mega-panel hidden>
+                <div class="contenedor mega-interior">
+                  <ul class="mega-lista" data-columnas={item.hijos.length > 4 ? 3 : 2}>
+                    {item.hijos.map((hijo, i) => (
+                      <li>
+                        <a href={hijo.href} class="mega-enlace">
+                          <span class="mega-icono">
+                            <Icon
+                              name={(item.nombre === 'Servicios' ? iconos[i] : iconosSol[i]) ?? 'escudo'}
+                              size={20}
+                            />
+                          </span>
+                          <span class="mega-texto">
+                            <span class="mega-titulo">{hijo.nombre}</span>
+                            {hijo.descripcion && <span class="mega-desc">{hijo.descripcion}</span>}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  {item.nombre === 'Servicios' && (
+                    <a href="/monitoreo/" class="mega-pie">
+                      <span>Conoce nuestra central de monitoreo</span>
+                      <Icon name="flecha" size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </li>
+          ) : (
+            <li class="nav-item">
+              <a
+                href={item.href}
+                class="nav-enlace"
+                aria-current={activo(item.href) ? 'page' : undefined}
+              >
+                {item.nombre}
+              </a>
+            </li>
+          )
+        ))}
+      </ul>
+    </nav>
+
+    <div class="acciones">
+      <a
+        href={`tel:${CONTACTO.ventas.tel}`}
+        class="tel-escritorio"
+        data-evento="click_telefono"
+        data-origen="header"
+      >
+        <Icon name="telefono" size={16} />
+        <span>{CONTACTO.ventas.display}</span>
+      </a>
+      <a href="/contacto/" class="btn btn-primario btn-cotizar">Cotizar</a>
+
+      <a
+        href={`tel:${CONTACTO.ventas.tel}`}
+        class="icono-boton solo-movil"
+        aria-label={`Llamar a Corven al ${CONTACTO.ventas.display}`}
+        data-evento="click_telefono"
+        data-origen="header-movil"
+      >
+        <Icon name="telefono" size={20} />
+      </a>
+      <button
+        type="button"
+        class="icono-boton solo-movil"
+        id="abrir-menu"
+        aria-expanded="false"
+        aria-controls="menu-movil"
+        aria-label="Abrir menú"
+      >
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .encabezado {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    height: 64px;
+    background: color-mix(in srgb, var(--corven-void) 92%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  .encabezado[data-scroll] { border-bottom-color: var(--corven-line); }
+
+  .barra {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .marca { display: flex; align-items: center; flex-shrink: 0; }
+  .logo { color: var(--corven-text); width: 108px; height: auto; }
+
+  .nav-escritorio { display: none; }
+  .nav-lista { display: flex; align-items: center; gap: 4px; list-style: none; padding: 0; }
+  .nav-item { position: static; }
+
+  .nav-enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 13px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--corven-text-dim);
+    border-radius: var(--radius-field);
+    background: none;
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+    transition: color 0.16s ease, background-color 0.16s ease;
+  }
+  .nav-enlace:hover,
+  .nav-enlace[aria-expanded='true'] { color: var(--corven-text); background: var(--corven-surface-2); }
+  .nav-enlace[aria-current='page'] { color: var(--corven-text); }
+  .nav-chevron { transition: transform 0.18s ease; }
+  .nav-boton[aria-expanded='true'] .nav-chevron { transform: rotate(180deg); }
+
+  /* Mega-menú de ancho completo */
+  .mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--corven-surface);
+    border-top: 1px solid var(--corven-line);
+    border-bottom: 1px solid var(--corven-line);
+    box-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.7);
+  }
+  .mega[hidden] { display: none; }
+  .mega-interior { padding-block: 28px 24px; }
+  .mega-lista {
+    display: grid;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mega-lista[data-columnas='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .mega-enlace {
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+    border-radius: var(--radius-card);
+    transition: background-color 0.16s ease;
+  }
+  .mega-enlace:hover { background: var(--corven-surface-2); }
+  .mega-icono { color: var(--corven-text-dim); flex-shrink: 0; padding-top: 2px; }
+  .mega-enlace:hover .mega-icono { color: var(--corven-accent); }
+  .mega-texto { display: flex; flex-direction: column; gap: 3px; }
+  .mega-titulo { font-size: 15px; font-weight: 500; color: var(--corven-text); }
+  .mega-desc { font-size: 13.5px; color: var(--corven-text-dim); line-height: 1.45; }
+
+  .mega-pie {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--corven-line);
+    width: 100%;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--corven-accent);
+  }
+  .mega-pie svg { transition: transform 0.18s ease; }
+  .mega-pie:hover svg { transform: translateX(3px); }
+
+  .acciones { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  .tel-escritorio {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--corven-text);
+    padding: 9px 12px;
+    border-radius: var(--radius-field);
+  }
+  .tel-escritorio:hover { color: var(--corven-accent); }
+  .tel-escritorio svg { color: var(--corven-text-dim); }
+  .tel-escritorio:hover svg { color: var(--corven-accent); }
+
+  .btn-cotizar { display: none; padding: 11px 20px; }
+
+  .icono-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-field);
+    border: 1px solid var(--corven-line);
+    background: transparent;
+    color: var(--corven-text);
+    cursor: pointer;
+  }
+  .icono-boton:hover { background: var(--corven-surface-2); }
+
+  @media (min-width: 1080px) {
+    .encabezado { height: 80px; }
+    .logo { width: 132px; }
+    .nav-escritorio { display: block; }
+    .tel-escritorio { display: inline-flex; }
+    .btn-cotizar { display: inline-flex; }
+    .solo-movil { display: none; }
+  }
+</style>
+
+<script>
+  const encabezado = document.getElementById('encabezado');
+
+  // Borde inferior solo después de 40 px de scroll.
+  const marcarScroll = () => {
+    if (!encabezado) return;
+    if (window.scrollY > 40) encabezado.setAttribute('data-scroll', '');
+    else encabezado.removeAttribute('data-scroll');
+  };
+  marcarScroll();
+  window.addEventListener('scroll', marcarScroll, { passive: true });
+
+  // Mega-menús: hover en puntero fino, clic y teclado siempre.
+  const megas = Array.from(document.querySelectorAll<HTMLElement>('[data-mega]'));
+  let cerrarTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const panelDe = (m: HTMLElement) => m.querySelector<HTMLElement>('[data-mega-panel]');
+  const botonDe = (m: HTMLElement) => m.querySelector<HTMLButtonElement>('[data-mega-boton]');
+
+  function cerrar(m: HTMLElement) {
+    panelDe(m)?.setAttribute('hidden', '');
+    botonDe(m)?.setAttribute('aria-expanded', 'false');
+  }
+  function cerrarTodos() {
+    megas.forEach(cerrar);
+  }
+  function abrir(m: HTMLElement) {
+    cerrarTodos();
+    panelDe(m)?.removeAttribute('hidden');
+    botonDe(m)?.setAttribute('aria-expanded', 'true');
+  }
+
+  megas.forEach((m) => {
+    const boton = botonDe(m);
+    boton?.addEventListener('click', () => {
+      const abierto = boton.getAttribute('aria-expanded') === 'true';
+      if (abierto) cerrar(m);
+      else abrir(m);
+    });
+
+    m.addEventListener('mouseenter', () => {
+      if (!window.matchMedia('(hover: hover) and (min-width: 1080px)').matches) return;
+      clearTimeout(cerrarTimer);
+      abrir(m);
+    });
+    m.addEventListener('mouseleave', () => {
+      if (!window.matchMedia('(hover: hover) and (min-width: 1080px)').matches) return;
+      cerrarTimer = setTimeout(() => cerrar(m), 120);
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const abierto = megas.find((m) => botonDe(m)?.getAttribute('aria-expanded') === 'true');
+    if (abierto) {
+      cerrar(abierto);
+      botonDe(abierto)?.focus();
+    }
+  });
+
+  document.addEventListener('focusin', (e) => {
+    const dentro = megas.some((m) => m.contains(e.target as Node));
+    if (!dentro) cerrarTodos();
+  });
+
+  document.addEventListener('click', (e) => {
+    const dentro = megas.some((m) => m.contains(e.target as Node));
+    if (!dentro) cerrarTodos();
+  });
+</script>

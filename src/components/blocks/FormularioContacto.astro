@@ -1,0 +1,316 @@
+---
+import { QUE_PROTEGER, SERVICIOS_INTERES, MUNICIPIOS, FORM_ENDPOINT, CONTACTO } from '../../data/site';
+---
+<form id="form-contacto" class="form" novalidate data-endpoint={FORM_ENDPOINT}>
+  <p class="obligatorios">Los campos marcados con <span aria-hidden="true">*</span> son obligatorios.</p>
+
+  <div class="campo">
+    <label for="nombre">Nombre <abbr title="obligatorio">*</abbr></label>
+    <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="err-nombre" />
+    <p class="error" id="err-nombre" hidden>Escribe tu nombre.</p>
+  </div>
+
+  <div class="fila">
+    <div class="campo">
+      <label for="telefono">Teléfono <abbr title="obligatorio">*</abbr></label>
+      <input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="err-telefono" />
+      <p class="error" id="err-telefono" hidden>Escribe un teléfono de 10 dígitos.</p>
+    </div>
+
+    <div class="campo">
+      <label for="correo">Correo electrónico <abbr title="obligatorio">*</abbr></label>
+      <input id="correo" name="correo" type="email" autocomplete="email" required aria-describedby="err-correo" />
+      <p class="error" id="err-correo" hidden>Escribe un correo válido.</p>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label for="proteger">¿Qué necesitas proteger? <abbr title="obligatorio">*</abbr></label>
+    <select id="proteger" name="proteger" required aria-describedby="err-proteger">
+      <option value="">Selecciona una opción</option>
+      {QUE_PROTEGER.map((o) => <option value={o}>{o}</option>)}
+    </select>
+    <p class="error" id="err-proteger" hidden>Elige qué necesitas proteger.</p>
+  </div>
+
+  <fieldset class="campo" aria-describedby="err-servicios">
+    <legend>Servicio de interés <abbr title="obligatorio">*</abbr></legend>
+    <div class="casillas">
+      {SERVICIOS_INTERES.map((s, i) => (
+        <label class="casilla" for={`servicio-${i}`}>
+          <input id={`servicio-${i}`} type="checkbox" name="servicios" value={s} />
+          <span>{s}</span>
+        </label>
+      ))}
+    </div>
+    <p class="error" id="err-servicios" hidden>Elige al menos un servicio.</p>
+  </fieldset>
+
+  <div class="campo">
+    <label for="municipio">Municipio <abbr title="obligatorio">*</abbr></label>
+    <select id="municipio" name="municipio" required aria-describedby="err-municipio">
+      <option value="">Selecciona tu municipio</option>
+      {MUNICIPIOS.map((m) => <option value={m.nombre}>{m.nombre}</option>)}
+      <option value="Otro">Otro</option>
+    </select>
+    <p class="error" id="err-municipio" hidden>Elige tu municipio.</p>
+  </div>
+
+  <div class="campo">
+    <label for="mensaje">Cuéntanos brevemente tu caso</label>
+    <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+  </div>
+
+  {/* Plan preseleccionado desde /planes/ vía ?plan= */}
+  <input type="hidden" name="plan" id="plan" value="" />
+
+  {/* Honeypot antioculto: invisible para personas, tentador para bots. */}
+  <div class="trampa" aria-hidden="true">
+    <label for="empresa-web">No llenar este campo</label>
+    <input id="empresa-web" name="empresa_web" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="campo consentimiento">
+    <label class="casilla" for="consentimiento">
+      <input id="consentimiento" name="consentimiento" type="checkbox" required aria-describedby="err-consentimiento" />
+      <span>
+        He leído y acepto el <a href="/aviso-de-privacidad/">aviso de privacidad</a>.
+        <abbr title="obligatorio">*</abbr>
+      </span>
+    </label>
+    <p class="error" id="err-consentimiento" hidden>Necesitamos tu consentimiento para contactarte.</p>
+  </div>
+
+  <button type="submit" class="btn btn-primario enviar">Enviar solicitud</button>
+
+  <p class="error error-envio" id="err-envio" hidden role="alert">
+    No pudimos enviar tu solicitud. Vuelve a intentarlo o escríbenos por WhatsApp al
+    {' '}{CONTACTO.ventas.display}.
+  </p>
+</form>
+
+<div id="form-confirmacion" class="confirmacion" role="status" hidden>
+  <p class="confirmacion-titulo">Recibimos tu solicitud.</p>
+  <p>
+    Un asesor te contacta en el transcurso del día hábil. Si es urgente, escríbenos por WhatsApp al
+    {' '}{CONTACTO.ventas.display}.
+  </p>
+</div>
+
+<style>
+  .form { display: grid; gap: 22px; max-width: 680px; }
+  .obligatorios { font-size: 13px; color: var(--corven-text-dim); }
+
+  .fila { display: grid; gap: 22px; }
+  @media (min-width: 620px) { .fila { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .campo { display: grid; gap: 8px; border: 0; padding: 0; margin: 0; min-width: 0; }
+
+  label, legend {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--corven-text);
+    padding: 0;
+  }
+  abbr { color: var(--corven-accent); text-decoration: none; }
+
+  input[type='text'],
+  input[type='tel'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--corven-surface-2);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-field);
+    color: var(--corven-text);
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.4;
+    transition: border-color 0.16s ease;
+  }
+  textarea { resize: vertical; min-height: 96px; }
+  select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--corven-text-mute) 50%),
+      linear-gradient(135deg, var(--corven-text-mute) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 40px;
+  }
+  input:hover, select:hover, textarea:hover { border-color: #39404A; }
+  input[aria-invalid='true'], select[aria-invalid='true'] { border-color: var(--corven-alert-txt); }
+
+  .casillas { display: grid; gap: 10px; margin-top: 2px; }
+  @media (min-width: 620px) { .casillas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .casilla {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 11px;
+    align-items: start;
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--corven-text-dim);
+    cursor: pointer;
+  }
+  .casilla input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    accent-color: var(--corven-accent);
+    cursor: pointer;
+  }
+  .casilla a {
+    color: var(--corven-text);
+    text-decoration: underline;
+    text-decoration-color: var(--corven-accent);
+    text-underline-offset: 3px;
+  }
+
+  .consentimiento { margin-top: 2px; }
+
+  /* Honeypot fuera de vista sin usar display:none, para que los bots lo llenen. */
+  .trampa {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .enviar { justify-self: start; margin-top: 4px; }
+  .enviar[disabled] { opacity: 0.6; cursor: progress; }
+
+  .error { font-size: 13px; color: var(--corven-alert-txt); }
+  .error[hidden] { display: none; }
+  .error-envio { margin-top: 4px; }
+
+  .confirmacion {
+    padding: 28px;
+    border: 1px solid var(--corven-armed);
+    border-radius: var(--radius-card);
+    background: var(--corven-surface);
+    max-width: 680px;
+    display: grid;
+    gap: 8px;
+  }
+  .confirmacion[hidden] { display: none; }
+  .confirmacion-titulo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--corven-armed);
+  }
+  .confirmacion p:last-child { font-size: 15px; line-height: 1.6; color: var(--corven-text-dim); }
+</style>
+
+<script>
+  const form = document.getElementById('form-contacto') as HTMLFormElement | null;
+  const confirmacion = document.getElementById('form-confirmacion');
+
+  if (form && confirmacion) {
+    const capa = ((window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ??= []);
+
+    /* Plan preseleccionado desde /planes/ */
+    const plan = new URLSearchParams(location.search).get('plan');
+    if (plan) {
+      (document.getElementById('plan') as HTMLInputElement).value = plan;
+      const mapa: Record<string, string> = { casa: 'Casa', negocio: 'Comercio o tienda', empresa: 'Varias ubicaciones' };
+      const proteger = document.getElementById('proteger') as HTMLSelectElement;
+      const destino = mapa[plan];
+      if (destino && Array.from(proteger.options).some((o) => o.value === destino)) {
+        proteger.value = destino;
+      }
+      const alarma = document.querySelector<HTMLInputElement>('input[name="servicios"][value="Alarma con monitoreo"]');
+      if (alarma) alarma.checked = true;
+    }
+
+    const mostrarError = (id: string, visible: boolean, campo?: HTMLElement) => {
+      const el = document.getElementById(id);
+      if (el) el.hidden = !visible;
+      if (campo) campo.setAttribute('aria-invalid', String(visible));
+    };
+
+    const validar = (): boolean => {
+      let ok = true;
+      let primerFallo: HTMLElement | null = null;
+
+      const requerir = (id: string, errId: string, prueba: (v: string) => boolean) => {
+        const campo = document.getElementById(id) as HTMLInputElement | HTMLSelectElement;
+        const malo = !prueba(campo.value.trim());
+        mostrarError(errId, malo, campo);
+        if (malo) { ok = false; primerFallo ??= campo; }
+      };
+
+      requerir('nombre', 'err-nombre', (v) => v.length >= 2);
+      requerir('telefono', 'err-telefono', (v) => v.replace(/\D/g, '').length >= 10);
+      requerir('correo', 'err-correo', (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v));
+      requerir('proteger', 'err-proteger', (v) => v !== '');
+      requerir('municipio', 'err-municipio', (v) => v !== '');
+
+      const servicios = form.querySelectorAll<HTMLInputElement>('input[name="servicios"]:checked');
+      const sinServicio = servicios.length === 0;
+      mostrarError('err-servicios', sinServicio);
+      if (sinServicio) { ok = false; primerFallo ??= form.querySelector('input[name="servicios"]'); }
+
+      const consent = document.getElementById('consentimiento') as HTMLInputElement;
+      mostrarError('err-consentimiento', !consent.checked);
+      if (!consent.checked) { ok = false; primerFallo ??= consent; }
+
+      primerFallo?.focus();
+      return ok;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      mostrarError('err-envio', false);
+      if (!validar()) return;
+
+      /* Honeypot: si viene lleno, se descarta en silencio. */
+      const trampa = (document.getElementById('empresa-web') as HTMLInputElement).value;
+      if (trampa) return;
+
+      const boton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const endpoint = form.dataset.endpoint;
+      const datos = new FormData(form);
+      datos.delete('empresa_web');
+
+      if (!endpoint) {
+        /* Sin destino configurado todavía (sección 15.6). No se finge un envío:
+           no se dispara generate_lead ni se muestra la confirmación. */
+        mostrarError('err-envio', true);
+        return;
+      }
+
+      if (boton) { boton.disabled = true; boton.textContent = 'Enviando…'; }
+      try {
+        const respuesta = await fetch(endpoint, {
+          method: 'POST',
+          body: datos,
+          headers: { Accept: 'application/json' },
+        });
+        if (!respuesta.ok) throw new Error(String(respuesta.status));
+
+        /* El evento de conversión se dispara con la respuesta exitosa,
+           nunca al hacer clic en el botón (sección 15.7). */
+        capa.push({
+          event: 'generate_lead',
+          proteger: datos.get('proteger'),
+          municipio: datos.get('municipio'),
+          plan: datos.get('plan') || undefined,
+        });
+
+        form.hidden = true;
+        confirmacion.hidden = false;
+        confirmacion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch {
+        mostrarError('err-envio', true);
+      } finally {
+        if (boton) { boton.disabled = false; boton.textContent = 'Enviar solicitud'; }
+      }
+    });
+  }
+</script>

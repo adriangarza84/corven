@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/blocks/PageHero.astro';
+import TrustBar from '../../components/blocks/TrustBar.astro';
+import ClosingCta from '../../components/blocks/ClosingCta.astro';
+import Icon from '../../components/ui/Icon.astro';
+import type { NombreIcono } from '../../components/ui/iconos';
+
+const soluciones = (await getCollection('soluciones')).sort((a, b) => a.data.orden - b.data.orden);
+---
+<BaseLayout
+  title="Soluciones por giro | Corven"
+  description="Configuraciones de seguridad para casa, comercio, industria, oficinas y escuelas. El equipo puede ser el mismo; el diseño del sistema, no."
+  migas={[{ nombre: 'Soluciones', href: '/soluciones/' }]}
+>
+  <PageHero
+    kicker="Soluciones"
+    h1="No es lo mismo proteger una casa que una nave de 8,000 metros"
+    subtitulo="El equipo puede ser el mismo. El diseño del sistema, no. Estas son las configuraciones que más instalamos por tipo de operación."
+  />
+  <TrustBar />
+
+  <section class="bloque">
+    <div class="contenedor">
+      <ul class="rejilla">
+        {soluciones.map((s) => (
+          <li>
+            <a href={`/soluciones/${s.id}/`} class="tarjeta-sol">
+              <span class="sol-icono"><Icon name={s.data.icono as NombreIcono} size={26} /></span>
+              <span class="sol-nombre">{s.data.nombre}</span>
+              <span class="sol-texto">{s.data.resumen}</span>
+              <span class="sol-flecha"><Icon name="flecha" size={16} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+
+  .rejilla { list-style: none; padding: 0; display: grid; gap: 16px; }
+  @media (min-width: 640px) { .rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .rejilla { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .tarjeta-sol {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 26px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+  .tarjeta-sol:hover { border-color: #39404A; background: var(--corven-surface-2); }
+  .sol-icono { color: var(--corven-text-dim); margin-bottom: 10px; }
+  .tarjeta-sol:hover .sol-icono { color: var(--corven-accent); }
+  .sol-nombre { font-family: var(--font-display); font-size: 18px; font-weight: 500; }
+  .sol-texto { font-size: 15px; line-height: 1.6; color: var(--corven-text-dim); flex: 1; }
+  .sol-flecha { color: var(--corven-text-mute); margin-top: 10px; transition: transform 0.18s ease, color 0.18s ease; }
+  .tarjeta-sol:hover .sol-flecha { color: var(--corven-accent); transform: translateX(3px); }
+</style>

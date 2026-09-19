@@ -1,0 +1,82 @@
+---
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  titulo?: string;
+  faq: { p: string; r: string }[];
+  /** Identificador para que varios acordeones convivan en una misma página. */
+  id?: string;
+}
+const { titulo = 'Preguntas frecuentes', faq, id = 'faq' } = Astro.props;
+---
+<section class="seccion" data-seccion="faq" id={id}>
+  <div class="contenedor">
+    <h2 class="t-h2">{titulo}</h2>
+    <div class="lista">
+      {faq.map((f, i) => (
+        <div class="item">
+          <h3>
+            <button
+              type="button"
+              class="pregunta"
+              aria-expanded="false"
+              aria-controls={`${id}-r-${i}`}
+              id={`${id}-p-${i}`}
+            >
+              <span>{f.p}</span>
+              <Icon name="chevron" size={20} class="icono" />
+            </button>
+          </h3>
+          <div class="respuesta" id={`${id}-r-${i}`} role="region" aria-labelledby={`${id}-p-${i}`} hidden>
+            <p>{f.r}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lista { margin-top: 32px; border-top: 1px solid var(--corven-line); max-width: 860px; }
+  .item { border-bottom: 1px solid var(--corven-line); }
+  h3 { margin: 0; font-family: var(--font-sans); font-weight: 400; }
+
+  .pregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    padding: 22px 0;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--corven-text);
+  }
+  @media (min-width: 768px) { .pregunta { font-size: 19px; } }
+  .pregunta:hover { color: var(--corven-accent); }
+
+  .icono { flex-shrink: 0; color: var(--corven-text-mute); transition: transform 0.22s ease; }
+  .pregunta[aria-expanded='true'] .icono { transform: rotate(180deg); color: var(--corven-accent); }
+
+  .respuesta { padding-bottom: 24px; }
+  .respuesta[hidden] { display: none; }
+  .respuesta p { color: var(--corven-text-dim); max-width: 68ch; font-size: 16px; line-height: 1.65; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.pregunta').forEach((boton) => {
+    boton.addEventListener('click', () => {
+      const panel = document.getElementById(boton.getAttribute('aria-controls') ?? '');
+      if (!panel) return;
+      const abierto = boton.getAttribute('aria-expanded') === 'true';
+      boton.setAttribute('aria-expanded', String(!abierto));
+      panel.hidden = abierto;
+    });
+  });
+</script>

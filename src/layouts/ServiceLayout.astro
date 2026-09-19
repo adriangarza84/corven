@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import TrustBar from '../components/blocks/TrustBar.astro';
+import Secciones from '../components/blocks/Secciones.astro';
+import FaqAccordion from '../components/blocks/FaqAccordion.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import { servicio, preguntasFrecuentes } from '../data/schema';
+
+interface Props { entrada: CollectionEntry<'servicios'> }
+const { entrada } = Astro.props;
+const d = entrada.data;
+const url = `/servicios/${entrada.id}/`;
+---
+<BaseLayout
+  title={d.seo.title}
+  description={d.seo.description}
+  migas={[{ nombre: 'Servicios', href: '/servicios/' }, { nombre: d.nombre, href: url }]}
+  whatsapp={d.whatsapp}
+  schemas={[
+    servicio({ nombre: d.nombre, descripcion: d.seo.description, serviceType: d.serviceType, url }),
+    preguntasFrecuentes(d.faq),
+  ]}
+>
+  <PageHero
+    kicker="Servicio"
+    h1={d.h1}
+    subtitulo={d.subtitulo}
+    botones={[
+      { ...d.botones.primario, primario: true },
+      { ...d.botones.secundario },
+    ]}
+  />
+  <TrustBar />
+  <Secciones bloques={d.secciones} />
+  <FaqAccordion faq={d.faq} id={`faq-${entrada.id}`} />
+  <ClosingCta whatsappTexto={d.whatsapp} />
+</BaseLayout>

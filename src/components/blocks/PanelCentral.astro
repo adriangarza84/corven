@@ -1,0 +1,100 @@
+---
+/**
+ * Representación de interfaz de la central de monitoreo.
+ *
+ * El documento pide fotografía real de la sala (pendiente #6) y prohíbe
+ * expresamente la imagen de banco en este sitio: una foto genérica contradice
+ * el argumento de "central propia". Mientras la sesión fotográfica no exista,
+ * este bloque usa una representación de interfaz — no simula una fotografía ni
+ * se presenta como una. Al recibir las fotos se cambia FOTOGRAFIA_CENTRAL en
+ * `src/data/pendientes.ts` y el componente cede su lugar a la imagen real.
+ */
+const cuentas = [
+  { id: 'C-1042', zona: 'Comercio · Guadalupe', estado: 'armado', texto: 'Armado' },
+  { id: 'C-0871', zona: 'Nave · Santa Catarina', estado: 'armado', texto: 'Armado' },
+  { id: 'C-2219', zona: 'Casa · San Pedro', estado: 'signal', texto: 'Señal en verificación' },
+  { id: 'C-1560', zona: 'Oficina · Valle Oriente', estado: 'armado', texto: 'Armado' },
+  { id: 'C-0308', zona: 'Casa · Santiago', estado: 'armado', texto: 'Armado' },
+] as const;
+---
+<div class="consola" role="img" aria-label="Representación de la consola de la central de monitoreo de Corven, con cuentas en estado armado y una señal en verificación">
+  <div class="consola-barra">
+    <span class="consola-titulo">Cuentas en línea</span>
+    <span class="consola-hora">24/7</span>
+  </div>
+  <ul class="consola-lista">
+    {cuentas.map((c) => (
+      <li data-estado={c.estado}>
+        <span class="cuenta-id">{c.id}</span>
+        <span class="cuenta-zona">{c.zona}</span>
+        <span class="cuenta-estado">
+          <span class="cuenta-punto" aria-hidden="true"></span>
+          {c.texto}
+        </span>
+      </li>
+    ))}
+  </ul>
+  <div class="consola-pie">
+    <span>Operador de Corven</span>
+    <span class="consola-plataforma">Plataforma Kodex</span>
+  </div>
+</div>
+
+<style>
+  .consola {
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+  }
+  .consola-barra,
+  .consola-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 18px;
+    font-size: 12.5px;
+    color: var(--corven-text-mute);
+  }
+  .consola-barra { border-bottom: 1px solid var(--corven-line); }
+  .consola-pie { border-top: 1px solid var(--corven-line); }
+  .consola-titulo { color: var(--corven-text-dim); font-weight: 500; }
+  .consola-hora { color: var(--corven-armed); font-weight: 500; }
+  .consola-plataforma { color: var(--corven-text-dim); }
+
+  .consola-lista { list-style: none; margin: 0; padding: 0; }
+  .consola-lista li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 12px;
+    padding: 14px 18px;
+    font-size: 13px;
+  }
+  @media (min-width: 560px) {
+    .consola-lista li { grid-template-columns: 66px 1fr auto; align-items: center; }
+  }
+  .consola-lista li + li { border-top: 1px solid var(--corven-line); }
+
+  .cuenta-id { color: var(--corven-text); font-weight: 500; }
+  .cuenta-zona { color: var(--corven-text-dim); }
+  .cuenta-estado {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--corven-text-mute);
+    font-size: 12.5px;
+  }
+  @media (min-width: 560px) { .cuenta-estado { grid-column: auto; } }
+
+  .cuenta-punto { width: 7px; height: 7px; border-radius: 999px; background: var(--corven-line); }
+  li[data-estado='armado'] .cuenta-punto { background: var(--corven-armed); }
+  li[data-estado='armado'] .cuenta-estado { color: var(--corven-armed); }
+  li[data-estado='signal'] .cuenta-punto {
+    background: var(--corven-signal);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--corven-signal) 18%, transparent);
+  }
+  li[data-estado='signal'] .cuenta-estado { color: var(--corven-signal); }
+</style>

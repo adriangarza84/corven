@@ -1,0 +1,62 @@
+---
+import Icon from '../ui/Icon.astro';
+
+const puntos = [
+  {
+    icono: 'app',
+    titulo: 'App en tu celular',
+    texto:
+      'Arma y desarma desde donde estés, revisa el historial de eventos y recibe notificación cuando alguien abre el negocio fuera de horario.',
+  },
+  {
+    icono: 'mascota',
+    titulo: 'Sensores que distinguen mascotas',
+    texto:
+      'Detección volumétrica calibrada para que tu perro o tu gato no disparen la alarma cada noche.',
+  },
+  {
+    icono: 'bateria',
+    titulo: 'Respaldo ante cortes de energía',
+    texto:
+      'Batería de respaldo integrada. Si se va la luz en tu colonia, el sistema sigue armado y la central sigue recibiendo.',
+  },
+  {
+    icono: 'antena',
+    titulo: 'Respaldo ante cortes de internet',
+    texto:
+      'Transmisión celular redundante. Si cortan el cable de internet o de teléfono, la señal llega igual a la central.',
+  },
+] as const;
+---
+<section class="seccion" data-seccion="tecnologia">
+  <div class="contenedor">
+    <h2 class="t-h2">Lo que resuelve el equipo que instalamos</h2>
+    <ul class="puntos">
+      {puntos.map((p) => (
+        <li>
+          <span class="icono"><Icon name={p.icono} size={24} /></span>
+          <h3 class="titulo">{p.titulo}</h3>
+          <p class="texto">{p.texto}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .puntos {
+    list-style: none;
+    padding: 0;
+    margin-top: 40px;
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .puntos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 32px; } }
+  @media (min-width: 1024px) { .puntos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; } }
+
+  .puntos li { display: grid; gap: 8px; align-content: start; }
+  .icono { color: var(--corven-accent); margin-bottom: 6px; }
+  .titulo { font-family: var(--font-display); font-size: 17px; font-weight: 500; }
+  .texto { font-size: 15px; line-height: 1.6; color: var(--corven-text-dim); }
+</style>

@@ -1,0 +1,12 @@
+---
+import PaginaLegal from '../components/blocks/PaginaLegal.astro';
+import { TERMINOS } from '../data/legales';
+import { TERMINOS_PUBLICADOS } from '../data/pendientes';
+---
+<PaginaLegal
+  titulo="Términos y condiciones"
+  descripcion="Términos y condiciones del servicio de monitoreo de Corven y alcance de la cobertura."
+  href="/terminos-y-condiciones/"
+  parrafos={TERMINOS}
+  publicado={TERMINOS_PUBLICADOS && TERMINOS.length > 0}
+/>

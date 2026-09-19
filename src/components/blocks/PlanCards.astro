@@ -1,0 +1,133 @@
+---
+import Icon from '../ui/Icon.astro';
+import { PLANES } from '../../data/planes';
+
+interface Props {
+  /** Versión compacta para el resumen del home. */
+  compacto?: boolean;
+}
+const { compacto = false } = Astro.props;
+
+const pesos = new Intl.NumberFormat('es-MX', {
+  style: 'currency',
+  currency: 'MXN',
+  maximumFractionDigits: 0,
+});
+---
+
+<ul class:list={['planes', { compacto }]}>
+  {PLANES.map((plan) => (
+    <li class:list={['plan', { destacado: plan.destacado }]}>
+      {plan.etiqueta && <span class="etiqueta">{plan.etiqueta}</span>}
+
+      <h3 class="nombre">{plan.nombre}</h3>
+
+      {/* El precio solo se publica cuando existe. Mientras Corven no confirme
+          los montos (pendiente #1), no se muestra placeholder ni cifra inventada. */}
+      {plan.aLaMedida ? (
+        <p class="precio precio-medida">Cotización a la medida</p>
+      ) : plan.desde !== null ? (
+        <p class="precio">
+          <span class="precio-desde">Desde</span>
+          <span class="precio-monto">{pesos.format(plan.desde)}</span>
+          <span class="precio-periodo">al mes</span>
+        </p>
+      ) : null}
+
+      <p class="para">{plan.para}</p>
+
+      <ul class="incluye">
+        {plan.incluye.map((i) => (
+          <li>
+            <Icon name="check" size={15} class="check" />
+            <span>{i}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={`/contacto/?plan=${plan.slug}`}
+        class:list={['btn', plan.destacado ? 'btn-primario' : 'btn-secundario', 'plan-boton']}
+      >
+        {plan.boton}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .planes {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (min-width: 900px) { .planes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100%;
+    padding: 28px 24px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+  }
+  .plan.destacado { border-color: var(--corven-accent); }
+
+  .etiqueta {
+    position: absolute;
+    top: -11px;
+    left: 24px;
+    padding: 4px 11px;
+    border-radius: var(--radius-field);
+    background: var(--corven-accent);
+    color: #000000;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .nombre { font-size: 20px; font-weight: 600; font-family: var(--font-display); }
+
+  .precio { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+  .precio-desde { font-size: 14px; color: var(--corven-text-dim); }
+  .precio-monto {
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--corven-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .precio-periodo { font-size: 14px; color: var(--corven-text-dim); }
+  .precio-medida {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--corven-text-dim);
+  }
+
+  .para { font-size: 15px; color: var(--corven-text-dim); }
+
+  .incluye { list-style: none; padding: 0; display: grid; gap: 11px; flex: 1; margin-top: 4px; }
+  .incluye li {
+    display: grid;
+    grid-template-columns: 15px 1fr;
+    gap: 11px;
+    align-items: start;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--corven-text-dim);
+  }
+  .check { color: var(--corven-armed); margin-top: 4px; }
+
+  .plan-boton { margin-top: 8px; width: 100%; }
+
+  .compacto .plan { padding: 24px 20px; gap: 12px; }
+  .compacto .incluye li:nth-child(n + 5) { display: none; }
+</style>

@@ -1,0 +1,61 @@
+---
+import ServiceGrid from './ServiceGrid.astro';
+
+const servicios = [
+  { icono: 'escudo', titulo: 'Alarmas y monitoreo', linea: 'Detecta, verificamos y avisamos', href: '/servicios/alarmas-monitoreo/' },
+  { icono: 'camara', titulo: 'Cámaras CCTV', linea: 'Mira tu propiedad desde tu celular', href: '/servicios/cctv-camaras-seguridad/' },
+  { icono: 'acceso', titulo: 'Control de acceso', linea: 'Controla quién entra y a qué hora', href: '/servicios/control-de-acceso/' },
+  { icono: 'incendio', titulo: 'Detección de incendio', linea: 'Humo y temperatura vigilados 24/7', href: '/servicios/deteccion-de-incendio/' },
+] as const;
+---
+
+<section class="hero" data-seccion="hero">
+  <div class="contenedor rejilla-hero">
+    <div class="texto">
+      <h1 class="t-h1">Seguridad que alguien está monitoreando</h1>
+      <p class="t-lead subtitulo">
+        Alarmas, cámaras, control de acceso y detección de incendio conectados a nuestra propia
+        central de monitoreo en Monterrey. Cuando salta una señal, la revisa un operador de Corven,
+        no un sistema automático ni una central subcontratada.
+      </p>
+      <div class="botones">
+        <a href="/planes/" class="btn btn-primario">Ver planes de monitoreo</a>
+        <a href="/contacto/" class="btn btn-secundario">Cotizar mi sistema</a>
+      </div>
+    </div>
+
+    <div class="servicios">
+      <ServiceGrid servicios={servicios} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { padding-block: 40px 48px; }
+  @media (min-width: 1024px) { .hero { padding-block: 72px 80px; } }
+
+  .rejilla-hero { display: grid; gap: 32px; }
+  @media (min-width: 1024px) {
+    /* 5 columnas de texto, 7 de servicios */
+    .rejilla-hero { grid-template-columns: 5fr 7fr; gap: 56px; align-items: center; }
+  }
+
+  .texto { display: contents; }
+  @media (min-width: 1024px) { .texto { display: block; } }
+
+  /* En móvil el orden es: titular, subtítulo, servicios, botones. */
+  h1 { order: 1; }
+  .subtitulo { order: 2; margin-top: 18px; color: var(--corven-text-dim); max-width: 46ch; }
+  .servicios { order: 3; }
+  .botones {
+    order: 4;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  @media (min-width: 1024px) {
+    .subtitulo { margin-top: 24px; }
+    .botones { margin-top: 32px; }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import TrustBar from '../components/blocks/TrustBar.astro';
+import Secciones from '../components/blocks/Secciones.astro';
+import ServiceGrid from '../components/blocks/ServiceGrid.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import Icon from '../components/ui/Icon.astro';
+import type { NombreIcono } from '../components/ui/iconos';
+
+interface Props { entrada: CollectionEntry<'soluciones'> }
+const { entrada } = Astro.props;
+const d = entrada.data;
+const url = `/soluciones/${entrada.id}/`;
+
+const todos = await getCollection('servicios');
+const relacionados = d.serviciosRelacionados
+  .map((slug) => todos.find((s) => s.id === slug))
+  .filter((s): s is CollectionEntry<'servicios'> => Boolean(s))
+  .map((s) => ({
+    icono: s.data.icono as NombreIcono,
+    titulo: s.data.nombre,
+    linea: s.data.subtitulo.split('.')[0] + '.',
+    href: `/servicios/${s.id}/`,
+  }));
+---
+<BaseLayout
+  title={d.seo.title}
+  description={d.seo.description}
+  migas={[{ nombre: 'Soluciones', href: '/soluciones/' }, { nombre: d.nombre, href: url }]}
+  whatsapp={d.whatsapp}
+>
+  <PageHero kicker="Solución por giro" h1={d.h1} subtitulo={d.subtitulo} />
+  <TrustBar />
+  <Secciones bloques={d.secciones} />
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Los servicios que entran en esta configuración</h2>
+      <div class="servicios">
+        <ServiceGrid servicios={relacionados} />
+      </div>
+      <a href="/planes/" class="enlace-flecha enlace">
+        Ver planes de monitoreo
+        <Icon name="flecha" size={16} />
+      </a>
+    </div>
+  </section>
+
+  <ClosingCta whatsappTexto={d.whatsapp} />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+  .servicios { margin-top: 32px; }
+  .enlace { margin-top: 28px; }
+</style>

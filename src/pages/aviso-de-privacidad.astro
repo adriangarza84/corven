@@ -1,0 +1,12 @@
+---
+import PaginaLegal from '../components/blocks/PaginaLegal.astro';
+import { AVISO_PRIVACIDAD } from '../data/legales';
+import { AVISO_PRIVACIDAD_PUBLICADO } from '../data/pendientes';
+---
+<PaginaLegal
+  titulo="Aviso de privacidad"
+  descripcion="Aviso de privacidad de Corven: tratamiento de datos personales, biométricos y de videovigilancia."
+  href="/aviso-de-privacidad/"
+  parrafos={AVISO_PRIVACIDAD}
+  publicado={AVISO_PRIVACIDAD_PUBLICADO && AVISO_PRIVACIDAD.length > 0}
+/>

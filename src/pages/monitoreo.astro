@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import TrustBar from '../components/blocks/TrustBar.astro';
+import PanelCentral from '../components/blocks/PanelCentral.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import Icon from '../components/ui/Icon.astro';
+import { negocioLocal } from '../data/schema';
+import { KODEX_CAPACIDADES } from '../data/pendientes';
+
+const wa = 'Hola Corven, quiero saber más sobre su central de monitoreo';
+
+const protocolo = [
+  {
+    titulo: 'Detección',
+    texto:
+      'El dispositivo detecta el evento: apertura de puerta, movimiento en zona armada, botón de pánico, humo o temperatura. El panel transmite a la central por el medio disponible, con respaldo celular si el enlace principal cayó.',
+  },
+  {
+    titulo: 'Recepción',
+    texto:
+      'La señal entra a la plataforma con identificación de cuenta, zona específica y hora exacta. El operador ve de inmediato de qué instalación se trata y qué tipo de evento es.',
+  },
+  {
+    titulo: 'Verificación',
+    texto:
+      'El operador revisa la secuencia de zonas activadas y, en instalaciones con video integrado, confirma en cámara qué está ocurriendo. Este paso es el que evita movilizar a alguien por una falsa alarma.',
+  },
+  {
+    titulo: 'Contacto contigo',
+    texto:
+      'Te llamamos al número principal. Si no contestamos, seguimos la lista de contactos de emergencia en el orden que definiste al contratar.',
+  },
+  {
+    titulo: 'Aviso a la autoridad',
+    texto:
+      'Confirmado el evento, damos aviso a la autoridad correspondiente con los datos de la ubicación y la descripción de lo detectado.',
+  },
+  {
+    titulo: 'Cierre y reporte',
+    texto:
+      'El evento se cierra con el registro de todo lo anterior. Puedes solicitar el reporte completo cuando lo necesites.',
+  },
+];
+
+const reportes = [
+  { icono: 'reloj', texto: 'Hora exacta de apertura y cierre de tu negocio, todos los días.' },
+  { icono: 'senal', texto: 'Aviso cuando alguien arma o desarma fuera del horario habitual.' },
+  { icono: 'reporte', texto: 'Historial completo de eventos con zona y hora.' },
+  { icono: 'bateria', texto: 'Reporte de señales de falla del equipo, para detectar un sensor con batería baja antes de que deje de servir.' },
+] as const;
+---
+<BaseLayout
+  title="Central de monitoreo propia 24/7 | Corven"
+  description="Monitoreamos desde nuestra central en Monterrey, con personal propio y tecnología Kodex. Conoce el protocolo completo de atención de una señal."
+  migas={[{ nombre: 'Central de monitoreo', href: '/monitoreo/' }]}
+  whatsapp={wa}
+  schemas={[negocioLocal()]}
+>
+  <PageHero
+    kicker="La página que sostiene todo lo demás"
+    h1="La central es nuestra. Los operadores también."
+    subtitulo="Corven monitorea desde su propia central en Monterrey, con plataforma Kodex y personal de la empresa. Nadie más recibe tus señales."
+    botones={[
+      { texto: 'Ver planes de monitoreo', href: '/planes/', primario: true },
+      { texto: 'Cotizar mi sistema', href: '/contacto/' },
+    ]}
+  />
+  <TrustBar />
+
+  <section class="bloque">
+    <div class="contenedor dos">
+      <div>
+        <h2 class="t-h2">La diferencia entre instalar una alarma y responder por ella</h2>
+        <div class="prosa cuerpo">
+          <p>
+            En el mercado local hay dos modelos. El primero: un instalador vende el equipo y
+            contrata a una central externa que monitorea a decenas de empresas al mismo tiempo. El
+            segundo: una empresa nacional monitorea desde otra ciudad, con protocolos estandarizados
+            para todo el país.
+          </p>
+          <p>
+            Corven trabaja distinto. Monitoreamos desde nuestra propia central, con operadores
+            contratados por nosotros y entrenados en nuestros protocolos. Cuando entra una señal
+            tuya, la atiende alguien que responde ante Corven y ante ti.
+          </p>
+          <p>
+            Esto se nota en lo cotidiano: cambiar tu lista de contactos toma una llamada, no un
+            ticket con un proveedor. Pedir un reporte de aperturas y cierres del mes es un correo. Y
+            si algo del protocolo no está funcionando para tu operación, lo ajustamos nosotros.
+          </p>
+        </div>
+      </div>
+      <div><PanelCentral /></div>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Tecnología Kodex</h2>
+      <div class="prosa medida cuerpo">
+        <p>
+          Nuestra central opera sobre Kodex, la plataforma con la que gestionamos recepción de
+          señales, verificación, historial de eventos y comunicación con el cliente. Cada señal
+          queda registrada con hora, zona, operador que la atendió y acciones tomadas.
+        </p>
+      </div>
+      {/* Las capacidades específicas de Kodex siguen pendientes (pendiente #11).
+          La lista no se publica mientras esté vacía: no se inventan funciones. */}
+      {KODEX_CAPACIDADES.length > 0 && (
+        <ul class="capacidades">
+          {KODEX_CAPACIDADES.map((c) => (
+            <li><Icon name="check" size={16} />{c}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Cómo se atiende una señal, paso a paso</h2>
+      <ol class="protocolo">
+        {protocolo.map((p, i) => (
+          <li>
+            <span class="numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div class="paso-texto">
+              <h3 class="t-h3">{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="nota">
+        Corven no cuenta con guardias propios ni con unidades de reacción armada. El protocolo cubre
+        hasta el aviso a la autoridad y el acompañamiento al cliente.
+      </p>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Lo que puedes saber de tu propiedad sin estar ahí</h2>
+      <ul class="reportes">
+        {reportes.map((r) => (
+          <li>
+            <span class="reporte-icono"><Icon name={r.icono} size={22} /></span>
+            <span>{r.texto}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ClosingCta whatsappTexto={wa} />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+
+  .dos { display: grid; gap: 36px; align-items: center; }
+  @media (min-width: 960px) { .dos { grid-template-columns: 1.15fr 1fr; gap: 56px; } }
+  .cuerpo { margin-top: 22px; }
+
+  .capacidades { list-style: none; padding: 0; margin-top: 28px; display: grid; gap: 12px; }
+  .capacidades li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 15px; color: var(--corven-text-dim);
+  }
+  .capacidades svg { color: var(--corven-armed); margin-top: 3px; flex-shrink: 0; }
+
+  /* Línea de tiempo vertical numerada */
+  .protocolo {
+    list-style: none;
+    padding: 0;
+    margin-top: 40px;
+    max-width: 780px;
+    counter-reset: paso;
+  }
+  .protocolo li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 20px;
+    padding-bottom: 32px;
+  }
+  .protocolo li:last-child { padding-bottom: 0; }
+  /* Línea que conecta los pasos */
+  .protocolo li:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 42px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--corven-line);
+  }
+
+  .numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 34px;
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-field);
+    background: var(--corven-surface);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--corven-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .paso-texto { display: grid; gap: 8px; padding-top: 3px; }
+  .paso-texto p { color: var(--corven-text-dim); font-size: 15.5px; line-height: 1.65; max-width: 66ch; }
+
+  .nota {
+    margin-top: 36px;
+    padding-left: 14px;
+    border-left: 2px solid var(--corven-line);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+    max-width: 68ch;
+  }
+
+  .reportes {
+    list-style: none;
+    padding: 0;
+    margin-top: 36px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 720px) { .reportes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .reportes li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 20px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+  }
+  .reporte-icono { color: var(--corven-accent); }
+</style>

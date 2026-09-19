@@ -1,0 +1,27 @@
+---
+import { LOGO_PATH, LOGO_VIEWBOX } from '../../data/logo';
+
+interface Props {
+  /** Ancho en píxeles. La altura se deriva de la proporción 731:129. */
+  width?: number;
+  class?: string;
+  /** Cuando el logo no es el único identificador accesible del enlace. */
+  decorativo?: boolean;
+}
+const { width = 150, class: clase = '', decorativo = false } = Astro.props;
+const height = Math.round((width * 129) / 731);
+---
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={LOGO_VIEWBOX}
+  width={width}
+  height={height}
+  class={clase}
+  role={decorativo ? 'presentation' : 'img'}
+  aria-hidden={decorativo ? 'true' : undefined}
+  aria-label={decorativo ? undefined : 'Corven'}
+  fill="none"
+>
+  {!decorativo && <title>Corven</title>}
+  <path fill="currentColor" fill-rule="evenodd" d={LOGO_PATH} />
+</svg>

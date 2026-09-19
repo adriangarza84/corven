@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/blocks/PageHero.astro';
+import TrustBar from '../../components/blocks/TrustBar.astro';
+import ClosingCta from '../../components/blocks/ClosingCta.astro';
+import Icon from '../../components/ui/Icon.astro';
+import type { NombreIcono } from '../../components/ui/iconos';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+---
+<BaseLayout
+  title="Servicios de seguridad electrónica | Corven"
+  description="Alarmas con monitoreo, cámaras CCTV, control de acceso y detección de incendio, diseñados e instalados por Corven en el área metropolitana de Monterrey."
+  migas={[{ nombre: 'Servicios', href: '/servicios/' }]}
+>
+  <PageHero
+    kicker="Servicios"
+    h1="Cuatro sistemas, una sola central"
+    subtitulo="Diseñamos, instalamos y damos soporte a los cuatro sistemas. Todos pueden conectarse a nuestra central de monitoreo y atenderse con el mismo protocolo."
+    botones={[
+      { texto: 'Conoce la central', href: '/monitoreo/', primario: true },
+      { texto: 'Cotizar mi sistema', href: '/contacto/' },
+    ]}
+  />
+  <TrustBar />
+
+  <section class="bloque">
+    <div class="contenedor">
+      <ul class="lista">
+        {servicios.map((s) => (
+          <li>
+            <a href={`/servicios/${s.id}/`} class="ficha">
+              <span class="ficha-icono"><Icon name={s.data.icono as NombreIcono} size={28} /></span>
+              <span class="ficha-cuerpo">
+                <span class="ficha-nombre">{s.data.nombre}</span>
+                <span class="ficha-texto">{s.data.subtitulo}</span>
+              </span>
+              <span class="ficha-flecha"><Icon name="flecha" size={18} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+
+  .lista { list-style: none; padding: 0; display: grid; gap: 14px; }
+  .ficha {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 18px;
+    align-items: start;
+    padding: 26px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+  @media (min-width: 760px) { .ficha { grid-template-columns: 28px 1fr 18px; align-items: center; } }
+  .ficha:hover { border-color: #39404A; background: var(--corven-surface-2); }
+
+  .ficha-icono { color: var(--corven-text-dim); }
+  .ficha:hover .ficha-icono { color: var(--corven-accent); }
+  .ficha-cuerpo { display: grid; gap: 6px; }
+  .ficha-nombre { font-family: var(--font-display); font-size: 19px; font-weight: 500; }
+  .ficha-texto { font-size: 15px; line-height: 1.6; color: var(--corven-text-dim); max-width: 74ch; }
+  .ficha-flecha { display: none; color: var(--corven-text-mute); transition: transform 0.18s ease, color 0.18s ease; }
+  @media (min-width: 760px) { .ficha-flecha { display: block; } }
+  .ficha:hover .ficha-flecha { color: var(--corven-accent); transform: translateX(3px); }
+</style>

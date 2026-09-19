@@ -1,0 +1,175 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import PlanCards from '../components/blocks/PlanCards.astro';
+import FaqAccordion from '../components/blocks/FaqAccordion.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import Icon from '../components/ui/Icon.astro';
+import { PLANES } from '../data/planes';
+import { MONEDA, POLITICA_MANTENIMIENTO, POLITICA_INSTALACION } from '../data/pendientes';
+import { preguntasFrecuentes, ORG_ID } from '../data/schema';
+import { SITE } from '../data/site';
+
+const wa = 'Hola Corven, quiero información sobre los planes de monitoreo';
+
+const cobro = [
+  {
+    icono: 'llave',
+    titulo: 'Equipo: pago único',
+    texto:
+      'Compras el equipo y es tuyo. Se cotiza según el levantamiento, porque depende de cuántos puntos hay que cubrir.',
+  },
+  {
+    icono: 'reloj',
+    titulo: 'Monitoreo: mensualidad fija',
+    texto:
+      'La mensualidad depende del plan, no del número de eventos. No cobramos por señal atendida.',
+  },
+  {
+    icono: 'reporte',
+    titulo: 'Contrato: 12 meses mínimo',
+    texto: 'Después del primer año el servicio continúa mes a mes.',
+  },
+] as const;
+
+/* "Qué no incluye" — solo se publican los puntos confirmados. Los pendientes
+   #8 y #9 (mantenimiento e instalación) aparecen en cuanto tengan valor. */
+const noIncluye = [
+  'Corven no presta servicio de guardias ni de unidades de reacción armada.',
+  'El costo del equipo no está incluido en la mensualidad; se cotiza aparte según el levantamiento.',
+  POLITICA_MANTENIMIENTO,
+  POLITICA_INSTALACION,
+].filter((x): x is string => Boolean(x));
+
+const faq = [
+  {
+    p: '¿Por qué el equipo no está incluido en la mensualidad?',
+    r: 'Porque preferimos que el equipo sea tuyo desde el día uno. En el esquema de renta, si dejas el servicio te quedas sin nada; aquí te quedas con la instalación completa.',
+  },
+  {
+    p: '¿Qué pasa al terminar los 12 meses?',
+    r: 'El servicio continúa mes a mes. Puedes cancelarlo con el aviso que marque el contrato.',
+  },
+  { p: '¿Puedo cambiar de plan?', r: 'Sí, en cualquier momento.' },
+  {
+    p: '¿Cobran por falsa alarma?',
+    r: 'No. La mensualidad es fija independientemente de cuántas señales atendamos.',
+  },
+];
+
+/* Un Offer por plan. El precio solo se declara cuando existe (pendiente #1). */
+const ofertas = PLANES.map((plan) => ({
+  '@type': 'Offer',
+  name: plan.nombre,
+  description: plan.para,
+  url: new URL(`/contacto/?plan=${plan.slug}`, SITE.url).href,
+  category: 'Servicio de monitoreo de alarmas',
+  seller: { '@id': ORG_ID },
+  priceCurrency: MONEDA,
+  ...(plan.desde !== null
+    ? {
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: plan.desde,
+          priceCurrency: MONEDA,
+          unitCode: 'MON',
+          minPrice: plan.desde,
+        },
+      }
+    : {}),
+}));
+---
+<BaseLayout
+  title="Planes de monitoreo y precios | Corven"
+  description="Compara nuestros planes de monitoreo para casa, negocio y empresa. Equipo en venta, mensualidad de monitoreo y contrato mínimo de 12 meses."
+  migas={[{ nombre: 'Planes', href: '/planes/' }]}
+  whatsapp={wa}
+  schemas={[preguntasFrecuentes(faq), ...ofertas]}
+>
+  <PageHero
+    kicker="Planes y precios"
+    h1="Planes de monitoreo"
+    subtitulo="El equipo se compra una vez y queda a tu nombre. El monitoreo se paga mensualmente, con contrato mínimo de 12 meses."
+  />
+
+  <section class="bloque cobro">
+    <div class="contenedor">
+      <h2 class="t-h3">Cómo funciona el cobro</h2>
+      <ul class="cobro-lista">
+        {cobro.map((c) => (
+          <li>
+            <span class="cobro-icono"><Icon name={c.icono} size={22} /></span>
+            <h3 class="cobro-titulo">{c.titulo}</h3>
+            <p class="cobro-texto">{c.texto}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Los planes</h2>
+      <div class="planes"><PlanCards /></div>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Qué no incluye</h2>
+      <ul class="no-incluye">
+        {noIncluye.map((n) => (
+          <li>
+            <Icon name="cerrar" size={15} class="cruz" />
+            <span>{n}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <FaqAccordion titulo="Preguntas sobre el servicio" faq={faq} id="faq-planes" />
+  <ClosingCta whatsappTexto={wa} />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+  .cobro { border-top: 0; padding-top: 0; }
+
+  .cobro-lista {
+    list-style: none;
+    padding: 0;
+    margin-top: 28px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 820px) { .cobro-lista { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .cobro-lista li {
+    display: grid;
+    gap: 7px;
+    align-content: start;
+    padding: 24px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+  }
+  .cobro-icono { color: var(--corven-accent); margin-bottom: 6px; }
+  .cobro-titulo { font-family: var(--font-display); font-size: 17px; font-weight: 500; }
+  .cobro-texto { font-size: 15px; line-height: 1.6; color: var(--corven-text-dim); }
+
+  .planes { margin-top: 40px; }
+
+  .no-incluye { list-style: none; padding: 0; margin-top: 28px; display: grid; gap: 14px; max-width: 76ch; }
+  .no-incluye li {
+    display: grid;
+    grid-template-columns: 15px 1fr;
+    gap: 13px;
+    align-items: start;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+  }
+  .cruz { color: var(--corven-alert); margin-top: 5px; }
+</style>

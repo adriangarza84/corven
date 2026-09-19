@@ -1,0 +1,238 @@
+---
+import Icon from '../ui/Icon.astro';
+
+/**
+ * Única animación del sitio no disparada por el usuario (sección 2 y 5.2).
+ * Se enciende una sola vez al entrar en viewport. Con `prefers-reduced-motion`
+ * los cuatro pasos aparecen ya encendidos.
+ */
+const pasos = [
+  {
+    t: '00:00',
+    estado: 'signal',
+    icono: 'senal',
+    titulo: 'Señal recibida',
+    texto:
+      'El panel detecta apertura, movimiento, humo o temperatura y transmite a la central. Si cortan la luz o el internet, el sistema sigue transmitiendo.',
+  },
+  {
+    t: '00:12',
+    estado: 'signal',
+    icono: 'verificar',
+    titulo: 'Verificación por operador',
+    texto:
+      'Un operador de Corven toma la señal, revisa las zonas activadas y, cuando hay cámaras integradas, confirma en video qué está pasando.',
+  },
+  {
+    t: '00:45',
+    estado: 'alert',
+    icono: 'telefono',
+    titulo: 'Aviso a tus contactos',
+    texto:
+      'Te llamamos a ti y, si no contestas, seguimos la lista de contactos de emergencia que definiste al contratar.',
+  },
+  {
+    t: '01:30',
+    estado: 'alert',
+    icono: 'sirena',
+    titulo: 'Aviso a la autoridad',
+    texto:
+      'Con el evento confirmado, damos aviso a la autoridad correspondiente y te mantenemos informado hasta que se cierra el reporte.',
+  },
+] as const;
+---
+
+<section class="seccion" data-seccion="protocolo" id="protocolo">
+  <div class="contenedor">
+    <header class="encabezado">
+      <h2 class="t-h2">Qué pasa en los primeros dos minutos</h2>
+      <p class="t-lead medida">
+        La diferencia entre una alarma que suena y una alarma que sirve es lo que ocurre después.
+        Este es nuestro protocolo.
+      </p>
+    </header>
+
+    <div class="panel" id="panel-protocolo">
+      <div class="panel-barra">
+        <span class="panel-etiqueta">Central de monitoreo Corven</span>
+        <span class="panel-estado">
+          <span class="punto" aria-hidden="true"></span>
+          En línea
+        </span>
+      </div>
+
+      <ol class="pasos">
+        {pasos.map((p, i) => (
+          <li class="paso" data-estado={p.estado} style={`--retraso:${i * 620}ms`}>
+            <span class="paso-tiempo">{p.t}</span>
+            <span class="paso-marca" aria-hidden="true">
+              <span class="paso-punto"></span>
+            </span>
+            <span class="paso-cuerpo">
+              <span class="paso-titulo">
+                <Icon name={p.icono} size={17} class="paso-icono" />
+                {p.titulo}
+              </span>
+              <span class="paso-texto">{p.texto}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <p class="nota">
+      Corven no presta servicio de guardias ni de unidades de reacción armada. Nuestro protocolo
+      cubre detección, verificación, aviso a tus contactos y aviso a la autoridad.
+    </p>
+  </div>
+</section>
+
+<style>
+  .encabezado { display: grid; gap: 14px; }
+  .encabezado p { color: var(--corven-text-dim); }
+
+  .panel {
+    margin-top: 40px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .panel-barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--corven-line);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .panel-etiqueta { color: var(--corven-text-mute); }
+  .panel-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--corven-armed);
+    font-variant-numeric: tabular-nums;
+  }
+  .punto {
+    width: 7px; height: 7px;
+    border-radius: 999px;
+    background: var(--corven-armed);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--corven-armed) 18%, transparent);
+  }
+
+  .pasos { list-style: none; margin: 0; padding: 0; }
+
+  .paso {
+    display: grid;
+    grid-template-columns: 52px 22px 1fr;
+    align-items: start;
+    gap: 0 12px;
+    padding: 20px 20px 20px 16px;
+    /* Estado apagado por defecto; la clase .encendido lo activa. */
+    opacity: 0.28;
+    transition: opacity 0.45s ease var(--retraso);
+  }
+  .paso + .paso { border-top: 1px solid var(--corven-line); }
+  @media (min-width: 640px) {
+    .paso { grid-template-columns: 68px 24px 1fr; padding: 22px 28px 22px 24px; }
+  }
+
+  .paso-tiempo {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--corven-text-mute);
+    padding-top: 2px;
+    transition: color 0.45s ease var(--retraso);
+  }
+
+  .paso-marca {
+    display: flex;
+    justify-content: center;
+    padding-top: 6px;
+    position: relative;
+  }
+  .paso-punto {
+    width: 9px; height: 9px;
+    border-radius: 999px;
+    background: var(--corven-line);
+    transition: background-color 0.45s ease var(--retraso), box-shadow 0.45s ease var(--retraso);
+  }
+
+  .paso-cuerpo { display: grid; gap: 6px; }
+  .paso-titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--corven-text);
+  }
+  .paso-icono { color: var(--corven-text-mute); transition: color 0.45s ease var(--retraso); }
+  .paso-texto {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+    max-width: 62ch;
+  }
+
+  /* Encendido */
+  #panel-protocolo.encendido .paso { opacity: 1; }
+  #panel-protocolo.encendido .paso-tiempo { color: var(--corven-text-dim); }
+  #panel-protocolo.encendido .paso[data-estado='signal'] .paso-punto {
+    background: var(--corven-signal);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--corven-signal) 16%, transparent);
+  }
+  #panel-protocolo.encendido .paso[data-estado='alert'] .paso-punto {
+    background: var(--corven-alert);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--corven-alert) 16%, transparent);
+  }
+  #panel-protocolo.encendido .paso[data-estado='signal'] .paso-icono { color: var(--corven-signal); }
+  #panel-protocolo.encendido .paso[data-estado='alert'] .paso-icono { color: var(--corven-alert); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .paso, .paso-tiempo, .paso-punto, .paso-icono { transition: none; }
+  }
+
+  .nota {
+    margin-top: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+    max-width: 68ch;
+    padding-left: 14px;
+    border-left: 2px solid var(--corven-line);
+  }
+</style>
+
+<script>
+  const panel = document.getElementById('panel-protocolo');
+  if (panel) {
+    const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const capa = ((window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ??= []);
+
+    if (reducido || !('IntersectionObserver' in window)) {
+      panel.classList.add('encendido');
+    } else {
+      const observador = new IntersectionObserver(
+        (entradas) => {
+          entradas.forEach((entrada) => {
+            if (!entrada.isIntersecting) return;
+            panel.classList.add('encendido');
+            capa.push({ event: 'scroll_protocolo' });
+            observador.disconnect(); // una sola vez
+          });
+        },
+        { threshold: 0.35 }
+      );
+      observador.observe(panel);
+    }
+  }
+</script>

@@ -1,0 +1,34 @@
+---
+import { MUNICIPIOS } from '../../data/site';
+interface Props { activo?: string }
+const { activo } = Astro.props;
+---
+<ul class="chips">
+  {MUNICIPIOS.map((m) => (
+    <li>
+      <a
+        href={`/cobertura/${m.slug}/`}
+        class:list={['chip', { actual: activo === m.slug }]}
+        aria-current={activo === m.slug ? 'page' : undefined}
+      >
+        {m.nombre}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 15px;
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-field);
+    font-size: 14px;
+    color: var(--corven-text-dim);
+    transition: border-color 0.16s ease, color 0.16s ease, background-color 0.16s ease;
+  }
+  .chip:hover { color: var(--corven-text); border-color: #39404A; background: var(--corven-surface-2); }
+  .chip.actual { color: var(--corven-text); border-color: var(--corven-accent); }
+</style>

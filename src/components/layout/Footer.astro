@@ -1,0 +1,201 @@
+---
+import Logo from '../ui/Logo.astro';
+import { CONTACTO, MUNICIPIOS, SERVICIOS_NAV, SOLUCIONES_NAV } from '../../data/site';
+import { AVISO_PRIVACIDAD_PUBLICADO, TERMINOS_PUBLICADOS } from '../../data/pendientes';
+
+const { direccion, ventas, monitoreo, correo } = CONTACTO;
+const anio = new Date().getFullYear();
+
+const serviciosFooter = [
+  ...SERVICIOS_NAV.map((s) => ({ nombre: s.nombre, href: s.href })),
+  { nombre: 'Central de monitoreo', href: '/monitoreo/' },
+  { nombre: 'Planes y precios', href: '/planes/' },
+];
+---
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="columnas">
+      <div class="col-marca">
+        <Logo width={132} class="pie-logo" />
+        <p class="pie-descripcion">
+          Sistemas de seguridad electrónica con central de monitoreo propia. 25 años protegiendo
+          casas, comercios e industria en el área metropolitana de Monterrey.
+        </p>
+        <p class="pie-dato">Más de 2,000 puntos instalados</p>
+      </div>
+
+      <nav class="col" aria-labelledby="pie-servicios">
+        <h2 class="pie-titulo" id="pie-servicios">Servicios</h2>
+        <ul>
+          {serviciosFooter.map((s) => <li><a href={s.href}>{s.nombre}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="col" aria-labelledby="pie-soluciones">
+        <h2 class="pie-titulo" id="pie-soluciones">Soluciones</h2>
+        <ul>
+          {SOLUCIONES_NAV.map((s) => <li><a href={s.href}>{s.nombre}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="col">
+        <h2 class="pie-titulo">Contacto</h2>
+        <address class="pie-direccion">
+          {direccion.edificio}<br />
+          {direccion.calle}<br />
+          {direccion.colonia}, {direccion.cp}<br />
+          {direccion.municipio}, {direccion.estadoCorto}
+        </address>
+
+        <ul class="pie-telefonos">
+          <li>
+            <span class="pie-etiqueta">Ventas</span>
+            <a href={`tel:${ventas.tel}`} data-evento="click_telefono" data-origen="footer">
+              {ventas.display}
+            </a>
+          </li>
+          <li>
+            <span class="pie-etiqueta">Monitoreo y soporte</span>
+            <a href={`tel:${monitoreo.tel}`} data-evento="click_telefono" data-origen="footer">
+              {monitoreo.display}
+            </a>
+          </li>
+          {correo && (
+            <li>
+              <span class="pie-etiqueta">Correo</span>
+              <a href={`mailto:${correo}`}>{correo}</a>
+            </li>
+          )}
+        </ul>
+
+        <p class="pie-horario">
+          {ventas.horario}<br />
+          <span class="pie-24">Central de monitoreo: 24 horas, todos los días</span>
+        </p>
+      </div>
+    </div>
+
+    <nav class="franja-cobertura" aria-label="Municipios con cobertura">
+      <span class="franja-etiqueta">Cobertura:</span>
+      {MUNICIPIOS.map((m, i) => (
+        <>
+          <a href={`/cobertura/${m.slug}/`}>{m.nombre}</a>
+          {i < MUNICIPIOS.length - 1 && <span class="franja-sep" aria-hidden="true">·</span>}
+        </>
+      ))}
+    </nav>
+
+    <div class="franja-inferior">
+      <p>© {anio} Corven. Todos los derechos reservados.</p>
+      <p class="legales">
+        {AVISO_PRIVACIDAD_PUBLICADO
+          ? <a href="/aviso-de-privacidad/">Aviso de privacidad</a>
+          : <span class="pendiente">Aviso de privacidad</span>}
+        <span aria-hidden="true">·</span>
+        {TERMINOS_PUBLICADOS
+          ? <a href="/terminos-y-condiciones/">Términos y condiciones</a>
+          : <span class="pendiente">Términos y condiciones</span>}
+      </p>
+      <p class="credito">
+        Diseño y desarrollo por <a href="https://futurite.com" rel="noopener">Futurité</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    background: var(--corven-void);
+    border-top: 1px solid var(--corven-line);
+    padding-block: 56px 32px;
+  }
+  @media (min-width: 768px) { .pie { padding-block: 72px 32px; } }
+
+  .columnas {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) {
+    .columnas { grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 48px; }
+  }
+
+  .pie-logo { color: var(--corven-text); }
+  .pie-descripcion {
+    margin-top: 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+    max-width: 38ch;
+  }
+  .pie-dato {
+    margin-top: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--corven-text-mute);
+  }
+
+  .pie-titulo {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--corven-text);
+    letter-spacing: 0.01em;
+    margin-bottom: 16px;
+  }
+  .col ul { list-style: none; padding: 0; display: grid; gap: 10px; }
+  .col ul a { font-size: 15px; color: var(--corven-text-dim); }
+  .col ul a:hover { color: var(--corven-text); }
+
+  .pie-direccion {
+    font-style: normal;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+  }
+  .pie-telefonos { list-style: none; padding: 0; margin-top: 20px; display: grid; gap: 12px; }
+  .pie-etiqueta {
+    display: block;
+    font-size: 12px;
+    color: var(--corven-text-dim);
+    margin-bottom: 2px;
+  }
+  .pie-telefonos a { font-size: 16px; font-weight: 500; color: var(--corven-text); }
+  .pie-telefonos a:hover { color: var(--corven-accent); }
+
+  .pie-horario { margin-top: 20px; font-size: 13px; line-height: 1.6; color: var(--corven-text-dim); }
+  .pie-24 { color: var(--corven-armed); }
+
+  .franja-cobertura {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--corven-line);
+    font-size: 13.5px;
+    line-height: 2;
+    color: var(--corven-text-dim);
+  }
+  .franja-etiqueta { color: var(--corven-text-mute); margin-right: 4px; }
+  .franja-cobertura a { color: var(--corven-text-dim); }
+  .franja-cobertura a:hover { color: var(--corven-accent); }
+  .franja-sep { color: var(--corven-line); margin-inline: 6px; }
+
+  .franja-inferior {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--corven-line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--corven-text-mute);
+  }
+  .legales { display: flex; gap: 8px; flex-wrap: wrap; }
+  .legales a:hover { color: var(--corven-text); }
+  /* Enlace legal sin destino publicado todavía: se muestra sin enlazar, no se inventa. */
+  .pendiente { color: var(--corven-line); }
+  .credito a { color: var(--corven-text-dim); }
+  .credito a:hover { color: var(--corven-accent); }
+</style>

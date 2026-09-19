@@ -1,0 +1,90 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '../ui/Icon.astro';
+import type { NombreIcono } from '../ui/iconos';
+
+const soluciones = (await getCollection('soluciones')).sort((a, b) => a.data.orden - b.data.orden);
+---
+<section class="seccion" data-seccion="soluciones-giro">
+  <div class="contenedor">
+    <header class="cabecera">
+      <h2 class="t-h2">No es lo mismo proteger una casa que una nave de 8,000 metros</h2>
+      <p class="t-lead medida">
+        El equipo puede ser el mismo. El diseño del sistema, no. Estas son las configuraciones que
+        más instalamos por tipo de operación.
+      </p>
+    </header>
+  </div>
+
+  <div class="carril-contenedor">
+    <ul class="carril">
+      {soluciones.map((s) => (
+        <li>
+          <a href={`/soluciones/${s.id}/`} class="giro">
+            <span class="giro-icono"><Icon name={s.data.icono as NombreIcono} size={24} /></span>
+            <span class="giro-nombre">{s.data.nombre}</span>
+            <span class="giro-texto">{s.data.resumen}</span>
+            <span class="giro-flecha"><Icon name="flecha" size={16} /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cabecera { display: grid; gap: 14px; }
+  .cabecera p { color: var(--corven-text-dim); }
+
+  .carril-contenedor { margin-top: 36px; }
+
+  .carril {
+    list-style: none;
+    margin: 0;
+    padding: 0 24px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(230px, 74%);
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .carril::-webkit-scrollbar { display: none; }
+  .carril > li { scroll-snap-align: start; }
+
+  @media (min-width: 1024px) {
+    .carril {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-auto-columns: auto;
+      overflow: visible;
+      gap: 16px;
+      max-width: var(--corven-container);
+      margin-inline: auto;
+      padding-inline: 48px;
+    }
+  }
+
+  .giro {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 22px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+  .giro:hover { border-color: #39404A; background: var(--corven-surface-2); }
+
+  .giro-icono { color: var(--corven-text-dim); margin-bottom: 10px; transition: color 0.18s ease; }
+  .giro:hover .giro-icono { color: var(--corven-accent); }
+
+  .giro-nombre { font-family: var(--font-display); font-size: 17px; font-weight: 500; }
+  .giro-texto { font-size: 14.5px; line-height: 1.55; color: var(--corven-text-dim); flex: 1; }
+  .giro-flecha { color: var(--corven-text-mute); margin-top: 8px; transition: color 0.18s ease, transform 0.18s ease; }
+  .giro:hover .giro-flecha { color: var(--corven-accent); transform: translateX(3px); }
+</style>

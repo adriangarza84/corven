@@ -1,0 +1,193 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import TrustBar from '../components/blocks/TrustBar.astro';
+import ServiceGrid from '../components/blocks/ServiceGrid.astro';
+import CoverageChips from '../components/blocks/CoverageChips.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import Icon from '../components/ui/Icon.astro';
+import type { NombreIcono } from '../components/ui/iconos';
+import { negocioLocal } from '../data/schema';
+import { CONTACTO } from '../data/site';
+
+interface Props { entrada: CollectionEntry<'cobertura'> }
+const { entrada } = Astro.props;
+const d = entrada.data;
+const url = `/cobertura/${entrada.id}/`;
+const wa = `Hola Corven, quiero cotizar un sistema de seguridad en ${d.municipio}`;
+
+const servicios = await getCollection('servicios');
+const tarjetas = servicios
+  .sort((a, b) => a.data.orden - b.data.orden)
+  .map((s) => ({
+    icono: s.data.icono as NombreIcono,
+    titulo: s.data.nombre,
+    linea: s.data.subtitulo.split('.')[0] + '.',
+    href: `/servicios/${s.id}/`,
+  }));
+
+const destacado = servicios.find((s) => s.id === d.destacado.slug);
+---
+<BaseLayout
+  title={d.seo.title}
+  description={d.seo.description}
+  migas={[{ nombre: 'Cobertura', href: '/cobertura/' }, { nombre: d.municipio, href: url }]}
+  whatsapp={wa}
+  schemas={[negocioLocal()]}
+>
+  <PageHero
+    kicker="Cobertura"
+    h1={`Sistemas de seguridad en ${d.municipio}`}
+    subtitulo={d.resumen}
+  />
+
+  <section class="apertura">
+    <div class="contenedor">
+      <div class="prosa medida">
+        {d.apertura.map((p) => <p>{p}</p>)}
+      </div>
+      <ul class="zonas" aria-label={`Zonas de ${d.municipio} donde trabajamos`}>
+        {d.zonas.map((z) => (
+          <li><Icon name="ubicacion" size={14} />{z}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <TrustBar />
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">{d.perfil.h2}</h2>
+      <div class="prosa medida cuerpo">
+        {d.perfil.parrafos.map((p) => <p>{p}</p>)}
+      </div>
+      {destacado && (
+        <div class="destacado">
+          <p class="destacado-etiqueta">Lo que más se contrata aquí</p>
+          <p class="destacado-nombre">{destacado.data.nombre}</p>
+          <p class="destacado-razon">{d.destacado.razon}</p>
+          <a href={`/servicios/${destacado.id}/`} class="enlace-flecha">
+            Ver el servicio
+            <Icon name="flecha" size={16} />
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Nuestros servicios en {d.municipio}</h2>
+      <div class="servicios"><ServiceGrid servicios={tarjetas} /></div>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor dos-columnas">
+      <div>
+        <h2 class="t-h2">Tiempos de atención</h2>
+        <div class="prosa cuerpo">
+          <p>
+            Nuestros técnicos son personal de Corven y cubren los diez municipios del área
+            metropolitana desde la oficina en San Pedro Garza García. Las visitas de instalación se
+            agendan tras el levantamiento; las de servicio y mantenimiento, dentro del horario de
+            atención de {CONTACTO.ventas.horario.toLowerCase()}.
+          </p>
+          <p>
+            El monitoreo es distinto: la central opera las 24 horas, todos los días del año.
+            Una señal entrante en {d.municipio} se atiende en el momento en que llega, sin importar
+            la hora.
+          </p>
+        </div>
+      </div>
+      <div>
+        <h2 class="t-h2">Monitoreado desde San Pedro</h2>
+        <div class="prosa cuerpo">
+          <p>
+            Las señales de {d.municipio} no salen del área metropolitana. Llegan a nuestra central
+            en San Pedro Garza García, donde las atiende un operador de Corven que conoce la ciudad
+            y sabe a qué autoridad corresponde cada zona.
+          </p>
+        </div>
+        <a href="/monitoreo/" class="enlace-flecha enlace">
+          Conoce cómo opera la central
+          <Icon name="flecha" size={16} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h3">Otros municipios que atendemos</h2>
+      <div class="chips"><CoverageChips activo={entrada.id} /></div>
+    </div>
+  </section>
+
+  <ClosingCta whatsappTexto={wa} />
+</BaseLayout>
+
+<style>
+  .apertura { padding-block: 0 48px; }
+  @media (min-width: 768px) { .apertura { padding-block: 0 64px; } }
+
+  .zonas {
+    list-style: none;
+    padding: 0;
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+  }
+  .zonas li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px 7px 10px;
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-field);
+    font-size: 13.5px;
+    color: var(--corven-text-dim);
+  }
+  .zonas svg { color: var(--corven-text-mute); }
+
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+  .cuerpo { margin-top: 22px; }
+
+  .destacado {
+    margin-top: 36px;
+    padding: 24px;
+    border: 1px solid var(--corven-line);
+    border-left: 2px solid var(--corven-accent);
+    border-radius: var(--radius-card);
+    background: var(--corven-surface);
+    max-width: 640px;
+  }
+  .destacado-etiqueta { font-size: 12.5px; color: var(--corven-text-mute); }
+  .destacado-nombre {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+  .destacado-razon {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--corven-text-dim);
+    margin-top: 8px;
+    max-width: 62ch;
+  }
+  .destacado .enlace-flecha { margin-top: 16px; }
+
+  .servicios { margin-top: 32px; }
+
+  .dos-columnas { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .dos-columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px; } }
+  .enlace { margin-top: 20px; }
+
+  .chips { margin-top: 24px; }
+</style>

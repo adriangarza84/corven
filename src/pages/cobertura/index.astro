@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/blocks/PageHero.astro';
+import TrustBar from '../../components/blocks/TrustBar.astro';
+import MapaCobertura from '../../components/blocks/MapaCobertura.astro';
+import ClosingCta from '../../components/blocks/ClosingCta.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { negocioLocal } from '../../data/schema';
+
+const municipios = (await getCollection('cobertura')).sort((a, b) => a.data.orden - b.data.orden);
+---
+<BaseLayout
+  title="Cobertura en Monterrey y área metropolitana | Corven"
+  description="Instalamos y monitoreamos en los diez municipios del área metropolitana de Monterrey. Consulta la cobertura de tu zona."
+  migas={[{ nombre: 'Cobertura', href: '/cobertura/' }]}
+  schemas={[negocioLocal()]}
+>
+  <PageHero
+    kicker="Cobertura"
+    h1="Cobertura en Monterrey y su área metropolitana"
+    subtitulo="Nuestra oficina está en San Pedro Garza García y nuestros técnicos atienden los diez municipios del área metropolitana. Instalación, mantenimiento y soporte con personal propio."
+  />
+  <TrustBar />
+
+  <section class="bloque">
+    <div class="contenedor">
+      <h2 class="t-h2">Los diez municipios</h2>
+      <ul class="rejilla">
+        {municipios.map((m) => (
+          <li>
+            <a href={`/cobertura/${m.id}/`} class="muni">
+              <span class="muni-nombre">{m.data.municipio}</span>
+              <span class="muni-texto">{m.data.resumen}</span>
+              <span class="muni-flecha"><Icon name="flecha" size={16} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="contenedor dos">
+      <div>
+        <h2 class="t-h2">Por qué importa que la central esté aquí</h2>
+        <div class="prosa cuerpo">
+          <p>
+            Monitorear desde Monterrey no es un detalle logístico. Nuestros operadores conocen la
+            ciudad, saben a qué autoridad corresponde cada zona y entienden el contexto de la
+            colonia desde donde entra la señal. Una central nacional atendiendo desde otra ciudad no
+            tiene ese conocimiento.
+          </p>
+        </div>
+        <a href="/monitoreo/" class="enlace-flecha enlace">
+          Conoce cómo opera la central
+          <Icon name="flecha" size={16} />
+        </a>
+      </div>
+      <div><MapaCobertura /></div>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .bloque { padding-block: 48px; border-top: 1px solid var(--corven-line); }
+  @media (min-width: 768px) { .bloque { padding-block: 72px; } }
+
+  .rejilla { list-style: none; padding: 0; margin-top: 32px; display: grid; gap: 14px; }
+  @media (min-width: 640px) { .rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .rejilla { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .muni {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    height: 100%;
+    padding: 22px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+  .muni:hover { border-color: #39404A; background: var(--corven-surface-2); }
+  .muni-nombre { font-family: var(--font-display); font-size: 17px; font-weight: 500; }
+  .muni-texto { font-size: 14.5px; line-height: 1.55; color: var(--corven-text-dim); flex: 1; }
+  .muni-flecha { color: var(--corven-text-mute); margin-top: 8px; transition: transform 0.18s ease, color 0.18s ease; }
+  .muni:hover .muni-flecha { color: var(--corven-accent); transform: translateX(3px); }
+
+  .dos { display: grid; gap: 36px; align-items: center; }
+  @media (min-width: 960px) { .dos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px; } }
+  .cuerpo { margin-top: 22px; }
+  .enlace { margin-top: 24px; }
+</style>

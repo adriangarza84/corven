@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/blocks/Hero.astro';
+import TrustBar from '../components/blocks/TrustBar.astro';
+import ProtocolTimeline from '../components/blocks/ProtocolTimeline.astro';
+import PanelCentral from '../components/blocks/PanelCentral.astro';
+import SolucionesGiro from '../components/blocks/SolucionesGiro.astro';
+import Tecnologia from '../components/blocks/Tecnologia.astro';
+import PlanCards from '../components/blocks/PlanCards.astro';
+import CoverageChips from '../components/blocks/CoverageChips.astro';
+import MapaCobertura from '../components/blocks/MapaCobertura.astro';
+import FaqAccordion from '../components/blocks/FaqAccordion.astro';
+import ClosingCta from '../components/blocks/ClosingCta.astro';
+import Icon from '../components/ui/Icon.astro';
+import { negocioLocal, preguntasFrecuentes } from '../data/schema';
+import { PRECIOS } from '../data/pendientes';
+
+/* La respuesta de precio solo se publica cuando Corven confirme el monto
+   (pendiente #1). Mientras tanto la pregunta se responde sin cifra. */
+const precioCasa = PRECIOS.casa?.desde;
+const respuestaPrecio = precioCasa
+  ? `Depende de cuántos puntos hay que proteger. El equipo se cotiza según el levantamiento y el monitoreo tiene una mensualidad fija desde $${precioCasa} al mes. Hacemos el levantamiento y la cotización sin costo.`
+  : 'Depende de cuántos puntos hay que proteger. El equipo se cotiza según el levantamiento y el monitoreo tiene una mensualidad fija según el plan. Hacemos el levantamiento y la cotización sin costo.';
+
+const faq = [
+  { p: '¿Cuánto cuesta un sistema con monitoreo?', r: respuestaPrecio },
+  {
+    p: '¿El equipo es mío o es rentado?',
+    r: 'Es tuyo. Se vende una sola vez y queda a tu nombre. Lo que se paga mensualmente es el servicio de monitoreo.',
+  },
+  {
+    p: '¿Hay contrato forzoso?',
+    r: 'El contrato de monitoreo es de 12 meses mínimo. Al terminar ese periodo se renueva mes a mes.',
+  },
+  {
+    p: '¿Quién contesta cuando salta mi alarma?',
+    r: 'Un operador de Corven, desde nuestra central en Monterrey. No es un centro de llamadas externo ni un sistema automático.',
+  },
+  {
+    p: '¿Corven manda guardias si confirman un robo?',
+    r: 'No. Corven no presta servicio de guardias ni de reacción armada. Verificamos el evento, avisamos a tus contactos de emergencia y damos aviso a la autoridad.',
+  },
+  {
+    p: '¿Qué pasa si se va la luz o el internet?',
+    r: 'El sistema tiene batería de respaldo y transmisión celular. Si falla la energía o el enlace de internet, sigue armado y sigue transmitiendo a la central.',
+  },
+];
+---
+<BaseLayout
+  title="Sistemas de seguridad en Monterrey | Corven"
+  description="Alarmas con monitoreo, CCTV, control de acceso y detección de incendio. Central propia y 25 años protegiendo el área metropolitana de Monterrey."
+  sinMigas
+  schemas={[negocioLocal(), preguntasFrecuentes(faq)]}
+>
+  <Hero />
+  <TrustBar />
+  <ProtocolTimeline />
+
+  <section class="seccion central" data-seccion="central-propia">
+    <div class="contenedor dos">
+      <div>
+        <h2 class="t-h2">Nuestra central, nuestro personal</h2>
+        <div class="prosa cuerpo">
+          <p>
+            Casi todas las empresas de alarmas en Monterrey instalan el equipo y mandan la señal a
+            una central de terceros. Nosotros no. Corven opera su propia central de monitoreo con
+            tecnología Kodex y con operadores que son parte de la empresa, capacitados en nuestros
+            protocolos y responsables directos ante ti.
+          </p>
+          <p>
+            Eso cambia cosas concretas: el operador conoce tu instalación, no lee una ficha
+            genérica. Los ajustes a tu protocolo se hacen internamente, sin intermediarios. Y cuando
+            llamas para pedir un reporte de eventos o corregir una lista de contactos, hablas con
+            Corven.
+          </p>
+        </div>
+        <a href="/monitoreo/" class="enlace-flecha enlace">
+          Conoce cómo opera la central
+          <Icon name="flecha" size={16} />
+        </a>
+      </div>
+      <div><PanelCentral /></div>
+    </div>
+  </section>
+
+  <SolucionesGiro />
+  <Tecnologia />
+
+  <section class="seccion" data-seccion="planes">
+    <div class="contenedor">
+      <header class="cabecera">
+        <h2 class="t-h2">Equipo que es tuyo, monitoreo por mensualidad</h2>
+        <p class="t-lead medida">
+          Compras el equipo una sola vez y queda a tu nombre. El monitoreo se paga mes a mes, con
+          contrato mínimo de 12 meses.
+        </p>
+      </header>
+      <div class="planes"><PlanCards compacto /></div>
+      <a href="/planes/" class="enlace-flecha enlace">
+        Ver los planes completos
+        <Icon name="flecha" size={16} />
+      </a>
+    </div>
+  </section>
+
+  <section class="seccion" data-seccion="cobertura">
+    <div class="contenedor dos">
+      <div>
+        <h2 class="t-h2">Instalamos y monitoreamos en toda el área metropolitana</h2>
+        <div class="prosa cuerpo">
+          <p>
+            Nuestra oficina está en San Pedro Garza García y nuestros técnicos cubren los diez
+            municipios del área metropolitana de Monterrey. Instalación, mantenimiento y visitas de
+            servicio con personal propio.
+          </p>
+        </div>
+        <div class="chips"><CoverageChips /></div>
+      </div>
+      <div><MapaCobertura /></div>
+    </div>
+  </section>
+
+  <FaqAccordion faq={faq} id="faq-home" />
+  <ClosingCta />
+</BaseLayout>
+
+<script>
+  /* El sitio anterior era una landing con anclas. La única indexada es
+     `#contacto`; el hash no llega al servidor, así que se resuelve aquí.
+     Se usa replace() para no dejar la home en el historial. */
+  const HEREDADAS: Record<string, string> = {
+    '#contacto': '/contacto/',
+    '#servicios': '/servicios/',
+    '#nosotros': '/nosotros/',
+  };
+  const destino = HEREDADAS[location.hash];
+  if (destino) location.replace(destino);
+</script>
+
+<style>
+  .dos { display: grid; gap: 36px; align-items: center; }
+  @media (min-width: 960px) { .dos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px; } }
+
+  .central { border-top: 1px solid var(--corven-line); }
+  .cuerpo { margin-top: 22px; }
+  .enlace { margin-top: 26px; }
+  .chips { margin-top: 28px; }
+
+  .cabecera { display: grid; gap: 14px; }
+  .cabecera p { color: var(--corven-text-dim); }
+  .planes { margin-top: 40px; }
+</style>

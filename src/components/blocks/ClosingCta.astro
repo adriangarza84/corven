@@ -1,0 +1,41 @@
+---
+import { whatsapp } from '../../data/site';
+
+interface Props {
+  titulo?: string;
+  texto?: string;
+  whatsappTexto?: string;
+}
+const {
+  titulo = 'Cuéntanos qué necesitas proteger',
+  texto = 'Un asesor revisa tu caso, te propone el equipo que realmente necesitas y te entrega la cotización. Sin costo y sin compromiso.',
+  whatsappTexto = 'Hola Corven, quiero cotizar un sistema de seguridad',
+} = Astro.props;
+---
+<section class="cierre" data-seccion="cierre-pagina">
+  <div class="contenedor interior">
+    <h2 class="t-h2">{titulo}</h2>
+    <p class="t-lead">{texto}</p>
+    <div class="botones">
+      <a href="/contacto/" class="btn btn-primario">Solicitar cotización</a>
+      <a href={whatsapp(whatsappTexto)} target="_blank" rel="noopener" class="btn btn-secundario">
+        Escribir por WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cierre { background: var(--corven-surface); border-top: 1px solid var(--corven-line); }
+  .interior {
+    padding-block: 64px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  @media (min-width: 768px) { .interior { padding-block: 88px; } }
+  .interior p { color: var(--corven-text-dim); max-width: 60ch; }
+  .botones { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 10px; }
+</style>

@@ -1,0 +1,46 @@
+---
+import Icon from '../ui/Icon.astro';
+interface Props { migas: { nombre: string; href: string }[] }
+const { migas } = Astro.props;
+---
+<nav class="migas" aria-label="Ruta de navegación">
+  <div class="contenedor">
+    <ol>
+      {migas.map((m, i) => (
+        <li>
+          {i < migas.length - 1 ? (
+            <>
+              <a href={m.href}>{m.nombre}</a>
+              <Icon name="chevron" size={13} class="sep" />
+            </>
+          ) : (
+            <span aria-current="page">{m.nombre}</span>
+          )}
+        </li>
+      ))}
+    </ol>
+  </div>
+</nav>
+
+<style>
+  .migas { border-bottom: 1px solid var(--corven-line); }
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 48px;
+    font-size: 13px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  ol::-webkit-scrollbar { display: none; }
+  li { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
+  a { color: var(--corven-text-dim); }
+  a:hover { color: var(--corven-accent); }
+  span[aria-current] { color: var(--corven-text); font-weight: 500; }
+  .sep { color: var(--corven-line); transform: rotate(-90deg); margin-inline: 4px; }
+</style>

@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import { SERVICIOS_NAV } from '../data/site';
+---
+<BaseLayout
+  title="Página no encontrada | Corven"
+  description="La página que buscas no existe o cambió de dirección."
+  noindex
+  sinMigas
+>
+  <section class="error">
+    <div class="contenedor">
+      <p class="codigo">404</p>
+      <h1 class="t-h2">Esta página no existe</h1>
+      <p class="texto">
+        Puede que haya cambiado de dirección. Estos son los destinos más buscados del sitio.
+      </p>
+      <ul class="enlaces">
+        <li><a href="/monitoreo/">Central de monitoreo <Icon name="flecha" size={15} /></a></li>
+        {SERVICIOS_NAV.map((s) => (
+          <li><a href={s.href}>{s.nombre} <Icon name="flecha" size={15} /></a></li>
+        ))}
+        <li><a href="/planes/">Planes y precios <Icon name="flecha" size={15} /></a></li>
+        <li><a href="/contacto/">Contacto <Icon name="flecha" size={15} /></a></li>
+      </ul>
+      <a href="/" class="btn btn-primario volver">Volver al inicio</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .error { padding-block: 64px 96px; }
+  .codigo {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--corven-accent);
+    margin-bottom: 14px;
+  }
+  .texto { margin-top: 16px; color: var(--corven-text-dim); max-width: 56ch; }
+  .enlaces {
+    list-style: none;
+    padding: 0;
+    margin-top: 32px;
+    display: grid;
+    gap: 2px;
+    max-width: 480px;
+    border-top: 1px solid var(--corven-line);
+  }
+  .enlaces li { border-bottom: 1px solid var(--corven-line); }
+  .enlaces a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 16px;
+    color: var(--corven-text-dim);
+  }
+  .enlaces a:hover { color: var(--corven-accent); }
+  .volver { margin-top: 36px; }
+</style>

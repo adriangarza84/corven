@@ -1,0 +1,39 @@
+---
+import { PILARES } from '../../data/site';
+---
+<div class="barra-confianza">
+  <div class="contenedor">
+    <ul>
+      {PILARES.map((p) => <li>{p}</li>)}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .barra-confianza {
+    border-block: 1px solid var(--corven-line);
+    background: var(--corven-void);
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  li {
+    padding: 14px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--corven-text-dim);
+    text-align: center;
+  }
+  li + li { border-top: 1px solid var(--corven-line); }
+
+  @media (min-width: 768px) {
+    ul { flex-direction: row; justify-content: center; align-items: center; gap: 0; }
+    li { padding: 18px 32px; }
+    li + li { border-top: 0; border-left: 1px solid var(--corven-line); }
+  }
+</style>

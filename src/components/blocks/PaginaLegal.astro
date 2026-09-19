@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../ui/Icon.astro';
+import { CONTACTO, whatsapp } from '../../data/site';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  href: string;
+  parrafos: string[];
+  publicado: boolean;
+}
+const { titulo, descripcion, href, parrafos, publicado } = Astro.props;
+---
+<BaseLayout
+  title={`${titulo} | Corven`}
+  description={descripcion}
+  migas={[{ nombre: titulo, href }]}
+  noindex={!publicado}
+  sinMigas
+>
+  <article class="legal">
+    <div class="contenedor">
+      <h1 class="t-h2">{titulo}</h1>
+
+      {publicado ? (
+        <div class="prosa medida cuerpo">
+          {parrafos.map((p) =>
+            p.startsWith('## ') ? <h2 class="t-h3 sub">{p.slice(3)}</h2> : <p>{p}</p>
+          )}
+        </div>
+      ) : (
+        <div class="pendiente">
+          <p>
+            Este documento está en preparación y todavía no se publica. Mientras tanto, puedes
+            resolver cualquier duda sobre el tratamiento de tus datos directamente con nosotros.
+          </p>
+          <div class="pendiente-botones">
+            <a href={`tel:${CONTACTO.ventas.tel}`} class="btn btn-secundario" data-origen="legal">
+              <Icon name="telefono" size={16} />
+              {CONTACTO.ventas.display}
+            </a>
+            <a
+              href={whatsapp('Hola Corven, tengo una duda sobre el manejo de mis datos personales')}
+              target="_blank"
+              rel="noopener"
+              class="btn btn-secundario"
+              data-origen="legal"
+            >
+              <Icon name="whatsapp" size={16} />
+              WhatsApp
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal { padding-block: 48px 80px; }
+  @media (min-width: 768px) { .legal { padding-block: 72px 96px; } }
+  .cuerpo { margin-top: 28px; }
+  .sub { margin-top: 36px; }
+
+  .pendiente {
+    margin-top: 28px;
+    padding: 26px;
+    background: var(--corven-surface);
+    border: 1px solid var(--corven-line);
+    border-radius: var(--radius-card);
+    max-width: 68ch;
+  }
+  .pendiente p { color: var(--corven-text-dim); line-height: 1.65; }
+  .pendiente-botones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+</style>
